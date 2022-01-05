@@ -1,0 +1,1043 @@
+﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery xsrf;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpCtxAccessor;
+@using Microsoft.AspNetCore.Mvc;
+@using Uptime.Monitoring.Model.Models;
+@using Uptime.Plugin.Dto;
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Dashboard";
+    ViewData["Active"] = "Index";
+}
+@model Uptime.Plugin.ViewModels.Dashboard.DashboardViewModel;
+
+<div class="dashboard-topbar">
+    <div class="wrapper">
+        <div class="dashboard-topbar__headline">
+            <h1 class="dashboard-topbar__title">Quick Stats</h1>
+            <p class="dashboard-topbar__description">Currently running @Model.ActiveMons of your @Model.TotalMons monitors.</p>
+        </div>
+        <div class="dashboard-topbar__actions">
+            <button class="button new-monitor-opener button--color-green button--size-md button--icon-plus"><span class="button__inner">add new monitor</span></button>
+        </div>
+    </div>
+</div>
+<div class="wrapper" id="app">
+    <div class="widgets">
+        <div class="widgets__item">
+            <div class="widget-monitoring widget">
+                <header class="widget__header">
+                    <h2 class="widget__title">Monitoring Stats</h2><span class="widget__description">Stats of your @Model.TotalMons monitors</span>
+                </header>
+                <div class="widget-monitoring__body widget__body">
+                    <div class="widget-monitoring__chart">
+                        <canvas id="monitors-chart" width="82" height="82"></canvas>
+                    </div>
+                    <ul class="widget-monitoring__stats">
+                        <li class="widget-monitoring__stats-item widget-monitoring__stats-item--up"><strong class="widget-monitoring__stats-item-title">@Model.UpMons</strong><span class="widget-monitoring__stats-item-text"><span class="legend-pin legend-pin--green"></span>Up</span></li>
+                        <li class="widget-monitoring__stats-item widget-monitoring__stats-item--down"><strong class="widget-monitoring__stats-item-title">@Model.DownMons</strong><span class="widget-monitoring__stats-item-text"><span class="legend-pin legend-pin--red"></span>Down</span></li>
+                        <li class="widget-monitoring__stats-item widget-monitoring__stats-item--paused"><strong class="widget-monitoring__stats-item-title">@Model.PausedMons</strong><span class="widget-monitoring__stats-item-text"><span class="legend-pin legend-pin--yellow"></span>Paused</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="widgets__item">
+            <div class="widget-uptime widget">
+                <header class="widget__header">
+                    <h2 class="widget__title">Overall Uptime</h2>
+                </header>
+                <div class="widget__body">
+                    <ul class="widget-uptime__stats">
+                        <li class="widget-uptime__stats-item"><strong class="widget-uptime__stats-item-title">@Model.AvgUptime.LastDay.ToString("0.#%")</strong><span class="widget-uptime__stats-item-text">last 24 hours</span></li>
+                        <li class="widget-uptime__stats-item"><strong class="widget-uptime__stats-item-title">@Model.AvgUptime.LastWeek.ToString("0.#%")</strong><span class="widget-uptime__stats-item-text">last 7 days</span></li>
+                        <li class="widget-uptime__stats-item"><strong class="widget-uptime__stats-item-title">@Model.AvgUptime.LastMonth.ToString("0.#%")</strong><span class="widget-uptime__stats-item-text">last 30 days</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="widgets__item">
+            <div class="widget-downtime widget">
+                <header class="widget__header">
+                    <h2 class="widget__title">Latest Downtime</h2>
+                </header>
+                <div class="widget__body">
+                    <div class="widget-downtime__text">
+                        @{
+                            if (Model.LatestDowntime == null) {
+                                <P>No latest downtime.</P>
+                            } else {
+                                var duration = Model.LatestDowntime.LastUpdate - Model.LatestDowntime.Start;
+                                <P>It was recorded (for the monitor&nbsp;<a href="#">@Model.LatestDowntimeMonitor</a>) on @Model.LatestDowntime.Start and the downtime lasted for @((int)duration.TotalHours) hrs, @duration.Minutes mins.</P>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="monitors-area">
+        <div class="row">
+            <div class="monitors-area__all-monitors col">
+                <div class="all-monitors">
+                    <header class="all-monitors__header">
+                        <h2 class="all-monitors__title">All Your Monitors</h2>
+                        <div class="all-monitors__actions">
+                            <div class="all-monitors__actions-item">
+                                <button class="dropdown-opener" type="button" data-toggle="modal" data-target="#bulk-actions">Bulk Actions</button>
+                            </div>
+                            <div class="all-monitors__actions-item">
+                                <button class="dropdown-opener" type="button" data-toggle="modal" data-target="#sort-monitors">Sort Monitors</button>
+                            </div>
+                        </div>
+                    </header>
+                    <body class="all-monitors__body">
+                        <div class="all-monitors__search">
+                            <div class="search">
+                                <label class="field search__query field--wide field--size-md">
+                                    <input v-on:change="search" v-model="searchQuery" type="text" placeholder="Name" name="input-name">
+                                </label>
+                                <button class="search__submit" type="button"></button>
+                            </div>
+                        </div>
+                        <div class="all-monitors__list-wrapper" style="min-height: 300px;">
+                            <div class="all-monitors__list scroll-area scroll-area--fadeBottom nano">
+                                <div class="all-monitors__list-inner nano-content">
+                                    <div class="all-monitors__item" v-for="(monitor, index) in monitors">
+                                        <div class="monitor">
+                                            <div class="monitor__data">
+                                                <span class="monitor__protocol">https</span>
+                                                <a v-on:click="loadMonitorEvents(monitor.id, monitor.name)" class="monitor__title">{{monitor.name}}</a>
+                                            </div>
+                                            <div class="monitor__additional">
+                                                <div class="status-summary">
+                                                    <div class="status-summary__label">{{round10(monitor.upPercents, 2)}}%</div>
+                                                    <div class="status-summary__bar">
+                                                        <div class="status-bar">
+                                                            <span v-for="status in monitor.states"
+                                                                  class="status-bar__item"
+                                                                  v-bind:class="getStatusBarItemClass(status.state)"
+                                                                  v-bind:style="{ width: Math.max(status.percents, 1) + '%' }"
+                                                                  style="width: 10%;"></span>
+                                                            @*<span class="status-bar__tooltip">Start Time: 2017-07-27 03:09:23<br>End Time: 2017-07-27 19:52:41<br>Duration: 16 hrs, 43 mins<br>Status: Paused</span>*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button class="monitor__settings" type="button"></button>
+                                                <div class="dropdown">
+                                                    <ul class="dropdown__list">
+                                                        <li class="dropdown__item">
+                                                            <a v-on:click="changeStatus(monitor.id)" class="dropdown__link" href="javascript:;"> {{ monitor.status == @((int)MonitorStatus.Stopped) || monitor.status == @((int)MonitorStatus.Paused)? 'Start' : 'Stop' }}</a>
+                                                        </li>
+                                                        <li class="dropdown__item">
+                                                            <a v-on:click="editMonitor(monitor.id)" class="dropdown__link" href="javascript:;">Edit</a>
+                                                        </li>
+                                                        <li class="dropdown__item">
+                                                            <a v-on:click="deleteMon(monitor.id)" class="dropdown__link" href="javascript:;">Delete</a>
+                                                        </li>
+                                                        <li class="dropdown__item">
+                                                            <a v-on:click="resetMon(monitor.id)" class="dropdown__link" href="javascript:;">Reset Stats</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </body>
+                </div>
+            </div>
+            <div class="monitors-area__events col">
+                <div class="monitors-events">
+                    <header class="monitors-events__header">
+                        <h2 class="monitors-events__title">Latest Events For {{ currentMonitorName }}</h2>
+                        <div class="monitors-events__actions">
+                            <div v-if="monitorId > -1" class="monitors-events__actions-item">
+                                <a download class="export-button" :href="'/api/monitors/'+ monitorId +'/logs'" v-on:click.prevent="downloadMonitorLogs">
+                                    Export Logs
+                                </a>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="monitors-events__body">
+                        <div class="events-table">
+                            <header class="events-table__header">
+                                <div class="events-table__row">
+                                    <div class="events-table__col events-table__col--event">Event</div>
+                                    <div class="events-table__col events-table__col--monitor">Monitor</div>
+                                    <div class="events-table__col events-table__col--time">Date-Time</div>
+                                    <div class="events-table__col events-table__col--reason">Reason</div>
+                                    <div class="events-table__col events-table__col--duration">Duration</div>
+                                </div>
+                            </header>
+                            <div class="events-table__body">
+                                <div v-for="(event, index) in events">
+                                    <div class="events-table__row">
+                                        <div class="events-table__col events-table__col--event">
+                                            @*<div :class="'events-table__event ' + (event.event.type == 0 ? 'events-table__event--up' : 'events-table__event--down')">{{event.type == 0 ? "Up" : "Down"}}</div>*@
+                                            <div :class="'events-table__event ' + eventClasses[event.type]">{{ eventNames[event.type] }}</div>
+                                        </div>
+                                        <div class="events-table__col events-table__col--monitor">{{event.monitorName}}</div>
+                                        <div class="events-table__col events-table__col--time">
+                                            <p v-if="event.created">
+                                                {{event.created.format("L LTS")}}
+                                            </p>
+                                        </div>
+                                        <div class="events-table__col events-table__col--reason">
+                                            <div class="events-table__reason">{{event.description}}</div>
+                                        </div>
+                                        <div class="events-table__col events-table__col--duration">
+                                            <p v-if="event.duration">
+                                                {{event.duration.humanize()}}
+                                            </p>
+                                        </div>
+                                        <button class="events-table__responsive-opener" type="button"></button>
+                                    </div>
+                                    <div class="events-table__row-responsive">
+                                        <dl class="events-table__col-responsive events-table__col-responsive--time">
+                                            <dt>Date-Time:</dt>
+                                            <dd v-if="event.created">{{event.created.format("L LTS")}}</dd>
+                                        </dl>
+                                        <dl class="events-table__col-responsive events-table__col-responsive--reason">
+                                            <dt>Reason:</dt>
+                                            <dd>{{event.description}}</dd>
+                                        </dl>
+                                        <dl class="events-table__col-responsive events-table__col-responsive--duration">
+                                            <dt>Duration:</dt>
+                                            <dd>
+                                                {{event.hours}} hrs, {{event.mins}} mins
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="monitors-events__footer">
+                            <div class="row justify-content-between align-items-center">
+                                <div class="col-auto">
+                                    <div class="monitors-events__pages-count">Page {{currentPage}}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <nav class="arrow-nav">
+                                        <a v-on:click="loadPrevEvents()" class="arrow-nav__item arrow-nav__item--prev" href="javascript:;">Prev</a>
+                                        <a v-on:click="loadNextEvents()" class="arrow-nav__item arrow-nav__item--next" href="javascript:;">Next</a>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bulk-actions-modal modal mfp-hide" id="bulk-actions">
+            <header class="modal__header">
+                <h2 class="modal__title">Bulk Actions</h2>
+                <button class="modal__close" type="button" data-close="modal">X</button>
+            </header>
+            <form action="#">
+                <div class="modal__body">
+                    <div class="bulk-actions">
+                        <div class="form">
+                            <fieldset class="form__section">
+                                <div class="form-group">
+                                    <label class="form-group__label">Action Details</label>
+                                    <div class="form-group__field">
+                                        <div class="select">
+                                            <select name="select" placeholder="Please select">
+                                                <option value="-1"></option>
+                                                <option value="1">option 1</option>
+                                                <option value="2">option 2</option>
+                                                <option value="3">option 3</option>
+                                                <option value="4">option 4</option>
+                                                <option value="5">option 5</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="form__section">
+                                <div class="form-group">
+                                    <label class="form-group__label">Action Approval</label>
+                                    <div class="alert alert--danger">Please write&nbsp;<b>START MONITORS&nbsp;</b>to the field below to approve the action.</div>
+                                    <div class="form-group__field">
+                                        <label class="field field--wide">
+                                            <input type="text" placeholder=" " name="input-name">
+                                        </label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <footer class="modal__footer">
+                    <div class="modal__footer-col"></div>
+                    <div class="modal__footer-col">
+                        <button class="button button--color-green"><span class="button__inner">Complete Action</span></button>
+                    </div>
+                </footer>
+            </form>
+        </div>
+        <div class="sort-monitors-modal modal mfp-hide" id="sort-monitors">
+            <header class="modal__header">
+                <h2 class="modal__title">Sort Monitors</h2>
+                <button class="modal__close" type="button" data-close="modal">X</button>
+            </header>
+            <form action="#">
+                <div class="modal__body">
+                    <div class="bulk-actions">
+                        <div class="form">
+                            <fieldset class="form__section">
+                                <div class="form-group">
+                                    <label class="form-group__label">Sort by Name:</label>
+                                    <div class="form-group__field">
+                                        <div class="control-group control-group--horizontal">
+                                            <label class="control control--radio undefined">
+                                                <input class="control__input" type="radio" name="sort-name"><span class="control__indicator"></span><span class="control__label">A-Z</span>
+                                            </label>
+                                            <label class="control control--radio undefined">
+                                                <input class="control__input" type="radio" name="sort-name" checked><span class="control__indicator"></span><span class="control__label">Z-A</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="form__section">
+                                <div class="form-group">
+                                    <label class="form-group__label">Sort by Status:</label>
+                                    <div class="form-group__field">
+                                        <div class="control-group control-group--vertical">
+                                            <label class="control control--radio undefined">
+                                                <input class="control__input" type="radio" name="status-sort" checked><span class="control__indicator"></span><span class="control__label">up-down-paused</span>
+                                            </label>
+                                            <label class="control control--radio undefined">
+                                                <input class="control__input" type="radio" name="status-sort"><span class="control__indicator"></span><span class="control__label">down-up-paused</span>
+                                            </label>
+                                            <label class="control control--radio undefined">
+                                                <input class="control__input" type="radio" name="status-sort"><span class="control__indicator"></span><span class="control__label">paused-up-down</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="form__section">
+                                <div class="form-group">
+                                    <label class="form-group__label">Sort by Status:</label>
+                                    <div class="form-group__field">
+                                        <div class="control-group control-group--vertical">
+                                            <label class="control control--radio undefined">
+                                                <input class="control__input" type="radio" name="type-sort"><span class="control__indicator"></span><span class="control__label">http-kywd-ping-port</span>
+                                            </label>
+                                            <label class="control control--radio undefined">
+                                                <input class="control__input" type="radio" name="type-sort" checked><span class="control__indicator"></span><span class="control__label">kywd-http-ping-port</span>
+                                            </label>
+                                            <label class="control control--radio undefined">
+                                                <input class="control__input" type="radio" name="type-sort"><span class="control__indicator"></span><span class="control__label">ping-port-http-kywd</span>
+                                            </label>
+                                            <label class="control control--radio undefined">
+                                                <input class="control__input" type="radio" name="type-sort"><span class="control__indicator"></span><span class="control__label">port-ping-http-kywd</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <footer class="modal__footer">
+                    <div class="modal__footer-col">
+                        <button class="button button--type-text"><span class="button__inner">Reset</span></button>
+                    </div>
+                    <div class="modal__footer-col">
+                        <button class="button button--color-green"><span class="button__inner">Apply</span></button>
+                    </div>
+                </footer>
+            </form>
+        </div>
+
+        <div class="new-monitor-modal modal mfp-hide" id="new-monitor">
+            <header class="modal__header">
+                <h2 class="modal__title">Add New Monitor</h2>
+                <button class="modal__close" type="button" data-close="modal">X</button>
+            </header>
+            <form class="form new-monitor" v-on:submit.prevent="saveMonitor()">
+                <div class="modal__body">
+                    <div class="new-monitor__layout">
+                        <div class="new-monitor__col new-monitor__col--left">
+                            <fieldset class="new-monitor__section">
+                                <div class="new-monitor__section-header">
+                                    <h3 class="new-monitor__section-title">Monitor Information</h3>
+                                </div>
+                                <div class="new-monitor__section-body">
+                                    <div class="form-group">
+                                        <label class="form-group__label">Monitor Type</label>
+                                        <div class="form-group__field">
+                                            <div class="select">
+                                                <select id="monitor_type" v-model="currentMonitor.type" placeholder="Please select">
+                                                    @{
+                                                        foreach (var kvp in @Model.MonitorTypes) {
+                                                            <option value="@(kvp.Key)">@(kvp.Value)</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-group__label">Friendly Name</label>
+                                        <div class="form-group__field">
+                                            <label class="field field--wide">
+                                                <input required v-model="currentMonitor.name" type="text" placeholder=" ">
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-group__label">URL (or IP)</label>
+                                        <div class="form-group__field">
+                                            <label class="field field--wide">
+                                                <input required v-model="currentMonitor.url" type="text" placeholder=" " name="input-name">
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group--slider">
+                                        <div class="form-group__label"><span>Monitoring Interval</span><span>every {{ currentMonitor.interval }} minutes</span></div>
+                                        <div class="form-group__field">
+                                            <div class="slider">
+                                                <input v-model="currentMonitor.interval" type="range" min="1" name="slider" data-no-autoinit>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="new-monitor__section new-monitor__section--optional">
+                                <div class="new-monitor__section-header">
+                                    <h3 class="new-monitor__section-title">Advanced Setting (optional)</h3>
+                                    <label class="ios-toggle">
+                                        <input id="advanced_toggle" class="ios-toggle__input" type="checkbox">
+                                        <span class="ios-toggle__indicator"></span>
+                                    </label>
+                                </div>
+                                <div id="advanced_options" class="new-monitor__section-body">
+                                    <div class="form-group">
+                                        <label class="form-group__label">Username</label>
+                                        <div class="form-group__field">
+                                            <label class="field field--wide">
+                                                <input v-model="currentMonitor.httpUser" type="text" placeholder=" " name="input-name">
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-group__label">Password</label>
+                                        <div class="form-group__field">
+                                            <label class="field field--wide">
+                                                <input v-model="currentMonitor.httpPassword" type="text" placeholder=" " name="input-name">
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-group__label">Authentication Type</label>
+                                        <div class="form-group__field">
+                                            <div class="radio-toggle">
+                                                <label class="radio-toggle__item">
+                                                    <input v-model="currentMonitor.authType" value="@((int)Uptime.Monitoring.Model.Models.MonitorAuthType.HTTP_BASIC)" class="radio-toggle__input" type="radio" name="radio-toggle" checked><span class="radio-toggle__label">HTTP Basic</span>
+                                                </label>
+                                                <label class="radio-toggle__item">
+                                                    <input v-model="currentMonitor.authType" value="@((int)Uptime.Monitoring.Model.Models.MonitorAuthType.HTTP_DIGEST)" class="radio-toggle__input" type="radio" name="radio-toggle"><span class="radio-toggle__label">Digest</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="new-monitor__col new-monitor__col--right">
+                            <fieldset class="new-monitor__section">
+                                <div class="new-monitor__section-header">
+                                    <h3 class="new-monitor__section-title">Select "Alert Contacts To Notify"</h3>
+                                    <div class="new-monitor__notify">
+                                        <p class="new-monitor__notify-text">{{ currentMonitor.alertContacts.length }} of {{ alertContacts.items.length }} alert contacts are selected.</p>
+                                        <div class="new-monitor__notify-table">
+                                            <table class="table notify-contacts">
+                                                <thead>
+                                                    <tr>
+                                                        <td class="notify-contacts__check">
+                                                            @*<label class="control control--checkbox control--labeless">
+                                                                    <input class="control__input control--labeless" type="checkbox" name="name12">
+                                                                    <span class="control__indicator"></span>
+                                                                    <span class="control__label">false</span>
+                                                                </label>*@
+                                                        </td>
+                                                        <td class="notify-contacts__type">Type</td>
+                                                        <td class="notify-contacts__contact">Alert Contact</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(contact, index) in alertContacts.items">
+                                                        <td class="notify-contacts__check">
+                                                            <label class="control control--checkbox control--labeless">
+                                                                <input v-model="currentMonitor.alertContacts" :value="contact.id" class="control__input control--labeless" type="checkbox">
+                                                                <span class="control__indicator"></span>
+                                                                <span class="control__label">false</span>
+                                                            </label>
+                                                        </td>
+                                                        <td class="notify-contacts__type"><span class="notify-contacts__mail"></span></td>
+                                                        <td class="notify-contacts__contact"><span>{{ contact.name }}</span></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <p class="new-monitor__notify-text">New alert contacts can be defined from the&nbsp;<a asp-action="Settings" asp-controller="Dashboard" asp-route-area="Uptime.Plugin">My Settings</a>&nbsp;page.</p>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <footer class="modal__footer">
+                    <div class="modal__footer-col"></div>
+                    <div class="modal__footer-col">
+                        <button type="submit" class="button button--color-green">
+                            <span class="button__inner">{{ currentMonitor.id ? 'Save' : 'Create' }} Monitor</span>
+                        </button>
+                    </div>
+                </footer>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            http: {},
+            currentMonitorName: 'All Monitors',
+            monitorId: -1,
+            pageSize: 20,
+            totalPages: 0,
+            pagingStates: [],
+            currentPage: 1,
+            searchQuery: "",
+            events: [],
+            monitors: [],
+            newMonitor: {
+                id: 0,
+                interval: 30,
+                name: '',
+                url: '',
+                httpUser: '',
+                httpPassword: '',
+                type: 1,
+                authType: 1,
+                alertContacts: []
+            },
+            currentMonitor: {
+                id: 0,
+                interval: 30,
+                name: '',
+                url: '',
+                httpUser: '',
+                httpPassword: '',
+                type: 1,
+                authType: 1,
+                alertContacts: []
+            },
+            eventNames: [],
+            eventClasses: [],
+            alertContacts: {
+                items: [],
+                page: 1,
+                pageSize: 10
+            },
+            drops: [],
+        },
+        methods: {
+            newMonitorModalConfig() {
+                var that = this;
+                var newMonitor = $('#new-monitor');
+                var slider = $('.slider input[type="range"]', newMonitor);
+
+                return {
+                    items: {
+                        type: 'inline',
+                        src: '#new-monitor'
+                    },
+                    callbacks: {
+                        open: function() {
+                            slider
+                                .rangeslider('destroy')
+                                .rangeslider({
+                                    polyfill: false,
+                                    onSlide: function (position, value) {
+                                        that.currentMonitor.interval = value;
+                                    }
+                                });
+                            that.loadAlertContacts();
+                        },
+                        close: function () {
+                            Object.assign(that.currentMonitor, that.newMonitor);
+                        }
+                    }
+                }
+            },
+
+            loadMonitorEvents(id, name) {
+                this.pagingStates = [];
+                this.currentMonitorName = name;
+                this.monitorId = id;
+                this.currentPage = 1;
+                this.loadEvents(
+                    "",
+                    response => {
+                        this.pagingStates[this.currentPage] = response.data.pagingState;
+                    }
+                );
+            },
+
+            loadEvents(pagingState, cb) {
+                this.http
+                    .get("/api/monitors/summary", {
+                        params: {
+                            monitorId: this.monitorId,
+                            pageSize: this.pageSize,
+                            pagingState: pagingState
+                        }
+                    })
+                    .then(response => {
+                        this.events = response.data.data;
+                        this.events.forEach(el => {
+                            el.duration = el.duration ? moment.duration(el.duration) : null;
+                            el.created = el.created ? moment(el.created) : null;
+                        });
+                        cb(response);
+                        setTimeout(function () { initScroll(); }, 200);
+                    });
+            },
+
+            loadNextEvents() {
+                if (this.pagingStates[this.currentPage] == "") {
+                    return;
+                }
+
+                this.loadEvents(
+                    this.pagingStates[this.currentPage],
+                    response => {
+                        if (response.data.data.length > 0 && response.data.pagingState != "") {
+                            this.currentPage++;
+                            this.pagingStates[this.currentPage] = response.data.pagingState;
+                        }
+                    }
+                );
+            },
+
+            loadPrevEvents() {
+                if (this.currentPage <= 1) {
+                    return;
+                }
+
+                this.loadEvents(
+                    this.pagingStates[this.currentPage - 2],
+                    response => {
+                        this.currentPage--;
+                    }
+                );
+            },
+
+            loadMonitors() {
+                this.drops.forEach(function (drop) {
+                    drop.destroy();
+                });
+                this.drops = [];
+                this.monitors = [];
+
+                this.http
+                    .get("/api/monitors", { params: { s: this.searchQuery } })
+                    .then(response => {
+                        this.monitors = response.data.data;
+
+                        var timeRange = moment.duration(1, 'w');
+
+                        for (let monitor of this.monitors) {
+                            monitor.states = [];
+
+                            let prev = {
+                                state: @((int)MonitoringState.Off),
+                                from: moment.utc().subtract(timeRange)
+                            }
+
+                            for (let current of monitor.monitoringHistory) {
+                                current.from = moment.utc(current.from);
+
+                                var duration = moment.duration(current.from - prev.from);
+                                var state = {
+                                    state: prev.state,
+                                    duration: duration,
+                                    percents: duration / timeRange * 100
+                                };
+
+                                if (state.duration > 0) {
+                                    monitor.states.push(state);
+                                }
+
+                                prev = current;
+                            }
+
+                            var duration = moment.duration(moment.utc() - prev.from);
+                            monitor.states.push({
+                                state: prev.state,
+                                duration: duration,
+                                percents: duration / timeRange * 100
+                            });
+
+                            let overallUp = moment.duration(0);
+                            let overallTurnOn = moment.duration(0);
+
+                            for (let state of monitor.states) {
+                                if (state.state == @((int)MonitoringState.Up)) {
+                                    overallUp += state.duration;
+                                    overallTurnOn += state.duration;
+                                }
+
+                                if (state.state == @((int)MonitoringState.Down)) {
+                                    overallTurnOn += state.duration;
+                                }
+                            }
+
+                            monitor.upPercents = overallUp == 0 ? 0 : (overallUp / overallTurnOn) * 100;
+                        }
+
+                        setTimeout(this.initMonitorsList, 1000);
+                    });
+            },
+
+            loadMonitor(id) {
+                this.http
+                    .get("/api/monitors/" + id)
+                    .then(response => {
+                        var newMonitor = $('#new-monitor');
+                        var slider = $('.slider input[type="range"]', newMonitor);
+
+                        this.currentMonitor = response.data;
+                        slider.val(this.currentMonitor.interval).change();
+                    });
+            },
+
+            loadAlertContacts() {
+                this.http
+                    .get('/api/alertcontacts', { params: { s: this.searchQuery } })
+                    .then(response => (this.alertContacts.items = response.data.data));
+            },
+
+            resetMon(id) {
+                this.http
+                    .post('api/monitors/' + id + '/reset')
+                    .then(response => {
+                    });
+            },
+
+            changeStatus(id) {
+                var that = this;
+                var monitor = null;
+
+                for (var i = 0; i < this.monitors.length; i++) {
+                    if (this.monitors[i].id == id) {
+                        monitor = this.monitors[i];
+                        break;
+                    }
+                }
+
+                if (monitor == null) {
+                    return;
+                }
+
+                var status = monitor.status == @((int)MonitorStatus.Stopped) || monitor.status == @((int)MonitorStatus.Paused)
+                    ? @((int)MonitorStatus.Started)
+                    : @((int)MonitorStatus.Stopped);
+
+                this.http
+                    .put('/api/monitors/' + id + '/status?status=' + status)
+                    .then(response => {
+                        monitor.status = status;
+                        that.loadMonitorEvents(monitor.id, monitor.name);
+                    })
+                    .catch(error => {
+                        alert(error);
+                    });
+            },
+
+            deleteMon(id) {
+                this.http
+                    .delete('/api/monitors/' + id)
+                    .then(response => {
+                        this.loadMonitors();
+                    });
+            },
+
+            editMonitor(id) {
+                this.currentMonitor.id = id;
+                this.loadMonitor(id);
+                $.magnificPopup.open(this.newMonitorModalConfig());
+            },
+
+            saveMonitor() {
+                if (this.currentMonitor.alertContacts.length == 0) {
+                    alert("Select at least one alert contact!");
+                    return;
+                }
+
+                this.http
+                    .post("/api/monitors", this.currentMonitor)
+                    .then(response => {
+                        this.loadMonitors();
+                        $('#new-monitor').magnificPopup('close');
+                    });
+            },
+
+            downloadMonitorLogs(e) {
+                this.http
+                    .get(event.target.href, { responseType: 'blob' })
+                    .then(response => {
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        const fileName = response.headers['content-disposition']?.match(/filename=(.*);/i)[1] ?? 'monitor.log'
+                        link.href = url;
+                        link.setAttribute('download', fileName);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.delete(link);
+                    })
+                    .catch(error => {
+                        $(e.target).notify("Logs for current monitor are not available.");
+                    });
+            },
+
+            search() {
+                this.loadMonitors();
+            },
+
+            showModal(id) {
+                $("#" + id).modal();
+            },
+
+            initMonitorsList() {
+                that = this;
+                // dropdown monitor menu
+                var allMonitors = $('.all-monitors');
+                var listWrapper = $('.all-monitors__list-wrapper', allMonitors);
+                var monitor = $('.monitor');
+
+                monitor.each((i, el) => {
+                    var el = $(el);
+                    var statusBar = $('.status-bar', el);
+                    var tooltipContent = $('.status-bar__tooltip', statusBar);
+                    var dropdownOpener = $('.monitor__settings', el);
+                    var dropdownContent = $('.dropdown', el);
+
+                    //var tooltip = statusBar.tooltipster({
+                    //    content: tooltipContent,
+                    //    theme: ['tooltip', 'tooltipster-monitor'],
+                    //    side: ['top'],
+                    //    distance: 12,
+                    //    delay: 100
+                    //});
+
+                    that.drops.push(new Drop({
+                        target: dropdownOpener[0],
+                        content: dropdownContent[0],
+                        position: 'bottom center',
+                        openOn: 'click',
+                        classes: 'drop-dropdown monitor__dropdown',
+                        constrainToWindow: false,
+                        constrainToScrollParent: false
+                    }));
+                });
+            },
+
+            getStatusBarItemClass(monitorState) {
+                var base = "status-bar__item--"
+
+                switch (monitorState) {
+                    case @((int)MonitoringState.Off):
+                        return base + "off";
+
+                    case @((int)MonitoringState.Up):
+                        return base + "success";
+
+                    case @((int)MonitoringState.Down):
+                        return base + "error";
+                }
+            },
+
+            round10(value, exp) {
+                if (typeof exp === 'undefined' || +exp === 0)
+                    return Math.round(value);
+
+                value = +value;
+                exp = +exp;
+
+                if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0))
+                    return NaN;
+
+                // Shift
+                value = value.toString().split('e');
+                value = Math.round(+(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp)));
+
+                // Shift back
+                value = value.toString().split('e');
+                return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
+            }
+        },
+
+        mounted() {
+            this.http = axios.create();
+            this.http.interceptors.request.use(function (config) {
+                config.headers = {
+                    "RequestVerificationToken": '@xsrf.GetAndStoreTokens(httpCtxAccessor.HttpContext).RequestToken'
+                }
+
+                return config;
+            }, null);
+
+            var that = this;
+            var popupOpener = $('.new-monitor-opener');
+
+            // interval slider
+            popupOpener.magnificPopup(this.newMonitorModalConfig());
+
+            // monitor type select
+            $('#monitor_type').on('select2:select', function (e) {
+                var data = e.params.data;
+                that.currentMonitor.type = data.id;
+            });
+
+            this.eventNames[@((int)EventType.Up)] = "Up";
+            this.eventNames[@((int)EventType.Down)] = "Down";
+            this.eventNames[@((int)EventType.Started)] = "Started";
+            this.eventNames[@((int)EventType.Paused)] = "Paused";
+            this.eventNames[@((int)EventType.Stopped)] = "Stopped";
+
+            this.eventClasses[@((int)EventType.Up)] = "events-table__event--up";
+            this.eventClasses[@((int)EventType.Down)] = "events-table__event--down";
+            this.eventClasses[@((int)EventType.Started)] = "events-table__event--started";
+            this.eventClasses[@((int)EventType.Paused)] = "events-table__event--paused";
+            this.eventClasses[@((int)EventType.Stopped)] = "events-table__event--paused";
+
+            this.loadEvents("", response => {
+                this.pagingStates[this.currentPage] = response.data.pagingState;
+            });
+            this.loadMonitors();
+        }
+    });
+
+    var ctx = document.getElementById('monitors-chart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [@Model.UpMons, @Model.DownMons, @Model.PausedMons],
+                backgroundColor: [
+                    '#388e3c',
+                    '#d32f2f',
+                    '#ffa000'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            cutoutPercentage: 82,
+            tooltips: {
+                enabled: false
+            }
+        }
+    });
+
+    // modals
+    window.modals = [];
+
+    $('[data-toggle="modal"]').each((i, el) => {
+        var toggler = $(el);
+        var target = $(el).data('target');
+
+        toggler.magnificPopup({
+            items: {
+                src: target,
+                type: 'inline'
+            },
+            overflowY: 'scroll'
+        });
+
+        window.modals.push({
+            target: target,
+            toggler: toggler
+        });
+    });
+    $('[data-close="modal"]').on('click', function () { $.magnificPopup.close(); });
+
+    // new monitor advanced options
+    $('#advanced_toggle').change(function () {
+        if (this.checked) {
+            $("#advanced_options").slideDown("slow");
+        } else {
+            $("#advanced_options").slideUp("slow");
+        }
+    });
+    $("#advanced_options").slideUp("slow");
+
+    // select2
+    var selects = $('.select select');
+
+    selects.each((i, el) => {
+        var select = $(el);
+        var placeholder = select.attr('placeholder');
+
+        select.select2({
+            placeholder: {
+                id: '-1', // the value of the option
+                text: placeholder
+            },
+            width: '100%',
+            minimumResultsForSearch: Infinity
+        });
+    });
+
+    // nanoscroller
+    function initScroll() {
+        var allMonitors = $('.all-monitors');
+        var listWrapper = $('.all-monitors__list-wrapper', allMonitors);
+        var scroll = $('.scroll-area', allMonitors);
+
+        scroll
+            .height('')
+            .nanoScroller({ destroy: true });
+
+        var listWrapperHeight = listWrapper.outerHeight();
+
+        scroll
+            .height(listWrapperHeight)
+            .nanoScroller({
+                alwaysVisible: true,
+                preventPageScrolling: $(window).width() >= 1000,
+                iOSNativeScrolling: true
+            })
+            .bind('scrollend', e => {
+                scroll.removeClass('scroll-area--fadeBottom');
+            })
+            .bind('scrolltop', e => {
+                scroll.removeClass('scroll-area--fadeTop');
+            })
+            .bind('update', e => {
+                scroll.addClass('scroll-area--fadeBottom');
+                scroll.addClass('scroll-area--fadeTop');
+            });
+    }
+</script>
+
+<style>
+    .monitor__title {
+        cursor: pointer;
+    }
+
+    .new-monitor__col {
+        flex: 1 1 50% !important;
+    }
+</style>

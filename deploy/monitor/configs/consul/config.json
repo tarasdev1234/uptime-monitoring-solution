@@ -1,0 +1,10 @@
+{
+    "server": false,
+    "datacenter": "ny1",
+    "log_level": "INFO",
+    "node_name": "monitor1.ny1",
+    "retry_join": ["web1.ny1.uptime.engineer"],
+    "client_addr": "0.0.0.0",
+    "bind_addr": "0.0.0.0",
+    "encrypt": "place_your_private_key_here"
+}

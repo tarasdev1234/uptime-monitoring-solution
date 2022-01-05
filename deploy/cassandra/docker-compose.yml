@@ -1,0 +1,20 @@
+version: "3.2"
+
+services:
+  cassandra:
+    image: 'cassandra:3.11.8'
+    ports:
+      - '7000:7000'
+      - '9042:9042'
+    restart: always
+    volumes:
+      - './configs/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml'
+      - '${CASSANDRA_DATA_DIRECTORY}:/var/lib/cassandra'
+    environment:
+      CASSANDRA_CLUSTER_NAME: 'uptime.engineer'
+      CASSANDRA_BROADCAST_ADDRESS: '${HOST_NAME}'
+      CASSANDRA_NUM_TOKENS: 8
+      CASSANDRA_SEEDS: '${CASSANDRA_SEEDS}'
+      CASSANDRA_DC: '${DC}'
+      CASSANDRA_RACK: '${RACK}'
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch

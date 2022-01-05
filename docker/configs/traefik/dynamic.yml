@@ -1,0 +1,48 @@
+http:
+  middlewares:
+    internal-ip-only:
+      ipWhiteList:
+        sourceRange:
+          - "0.0.0.0/0"
+    strip-service-route-prefix:
+      stripPrefixRegex:
+        regex:
+          - "/services/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/"
+
+  services:
+    consul-http:
+      loadBalancer:
+        servers:
+          - url: "http://consul:8500/"
+    uptimeweb:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.108:5001/"
+    monitoring-1:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.108:5006/"
+
+  routers:
+    to-consul-http:
+      rule: "PathPrefix(`/consul`, `/v1`)"
+      service: consul-http
+    to-uptimeweb:
+      rule: "PathPrefix(`/`)"
+      service: uptimeweb
+      priority: -1
+    to-uptimeweb-users-api:
+      rule: "PathPrefix(`/api/users/{id:[0-9]+}/company`)"
+      service: uptimeweb
+      priority: 2
+    to-monitoring-1:
+      rule: "PathPrefix(`/services/774cf199-4105-47c2-be2d-0ccbe7c1f980/`)"
+      service: monitoring-1
+      middlewares:
+        - internal-ip-only
+        - strip-service-route-prefix
+
+tls:
+  certificates:
+    - certFile: /etc/traefik/certificates/localhostdev.crt
+      keyFile: /etc/traefik/certificates/localhostdev.key

@@ -1,0 +1,27 @@
+@{
+    Layout = "./_Layout.cshtml";
+    ViewData["Title"] = "Home Page";
+}
+
+<div id="app"></div>
+
+@section scripts {
+    <script>
+        var addErrors = function (err) {
+            for (var key in err.response.data) {
+                if (err.response.data.hasOwnProperty(key)) {
+                    $("#" + key).addClass("has-danger");
+                    $("#" + key).append($("<div>").addClass("form-control-feedback").html(err.response.data[key]));
+                }
+            }
+
+            console.log(err);
+        };
+
+        var clearForm = function () {
+            $(".has-danger").removeClass("has-danger");
+            $(".form-control-feedback").remove();
+        }
+    </script>
+    <script src="/Admin.Web/dist/main.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,68 @@
+version: "3.2"
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+
+services:
+  uptimeweb:
+    image: uptimeweb:dev
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "4502:80"
+    volumes:
+      - ./configs/uptimeweb/appsettings.json:/app/appsettings.json
+
+  authority:
+    image: reliablesite.authority:dev
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    command: '/seed'
+    ports:
+      - "4501:80"
+    volumes:
+      - ./configs/authority/appsettings.json:/app/appsettings.json
+
+  notifications:
+    image: uptime.notifications:dev
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "4500:80"
+    volumes:
+      - ./configs/notifications/appsettings.json:/app/appsettings.json
+
+  consul:
+    image: 'consul:1.8.4'
+    network_mode: 'host'
+    restart: always
+    environment:
+      - CONSUL_BIND_INTERFACE=${CONSUL_INTERFACE}
+      - CONSUL_CLIENT_INTERFACE=${CONSUL_INTERFACE}
+    volumes:
+      - './configs/consul:/consul/config'
+      - './data/consul:/consul/data'
+
+  traefik:
+    image: traefik:v2.2
+    restart: always
+    environment:
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+    ports:
+      - '80:80'
+      - '8080:8080'
+      - "443:443"
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - './configs/traefik:/etc/traefik/'
+      - './data/traefik:/var/traefik/'
+    networks:
+      default:
+        aliases:
+          - uptime.engineer

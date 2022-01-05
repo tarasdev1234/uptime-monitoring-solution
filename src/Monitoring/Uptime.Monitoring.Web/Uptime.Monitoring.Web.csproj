@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>1cea6150-e502-47b4-9e39-d229bbafbc58</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Authority\Reliablesite.Authority.Authentication\Reliablesite.Authority.Authentication.csproj" />
+    <ProjectReference Include="..\Uptime.Monitoring.Data\Uptime.Monitoring.Data.csproj" />
+    <ProjectReference Include="..\Uptime.Monitoring.Model\Uptime.Monitoring.Model.csproj" />
+  </ItemGroup>
+
+</Project>

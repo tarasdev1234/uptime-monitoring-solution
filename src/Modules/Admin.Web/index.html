@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="wwwroot/dist/vendor.css" asp-append-version="true" />
+    <link rel="stylesheet" href="wwwroot/dist/site.css" asp-append-version="true" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+    <script>
+        WebFont.load({
+            google: { "families": ["Poppins:300,400,500,600,700", "Roboto:300,400,500,600,700"] },
+            active: function () {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+    <link href="wwwroot/vendors/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="wwwroot/vendors/base/vendors.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="wwwroot/demo/default/base/style.bundle.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="~/demo/default/media/img/logo/favicon.ico" />
+</head>
+
+<body class="m-page--fluid m--skin- m-content--skin-light2 m-header--fixed m-header--fixed-mobile m-aside-left--enabled m-aside-left--skin-dark m-aside-left--offcanvas m-footer--push m-aside--offcanvas-default">
+
+    <script src="wwwroot/dist/vendor.js" asp-append-version="true"></script>
+
+    <script src="wwwroot/vendors/base/vendors.bundle.js" type="text/javascript"></script>
+    <script src="wwwroot/demo/default/base/scripts.bundle.js" type="text/javascript"></script>
+    <script src="wwwroot/vendors/custom/fullcalendar/fullcalendar.bundle.js" type="text/javascript"></script>
+    <script src="wwwroot/app/js/dashboard.js" type="text/javascript"></script>
+
+    <div id="app"></div>
+	
+	<script>
+		var AppSettings = {
+			AuthUrl: "http://localhost:51743/",
+			AppUrl: "http://localhost:51743/",
+			ClientPortalUrl: "http://localhost:51743/",
+			IdToken: "",
+			AccessToken: "",
+			ApiUrl: "http://localhost:51743/",
+			UserName: "@Model.UserName",
+			UserEmail: "@Model.UserEmail",
+			EmailHash: "@Model.EmailHash",
+		};
+	</script>
+
+    <script src="wwwroot/dist/main.js"></script>
+</body>
+
+</html>

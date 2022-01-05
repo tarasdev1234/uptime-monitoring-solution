@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["Date"] = DateTime.Now.Year;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700|Roboto:300,400,500,700">
+    <link rel="stylesheet" href="/Uptime.Theme/css/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    @*<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>*@
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+    @*<link href="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.2/rangeslider.min.css" rel="stylesheet" />*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.2/rangeslider.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/Uptime.Theme/css/magnific-popup.css">
+    <script src="/Uptime.Theme/js/magnific-popup.js"></script>
+
+    <link rel="stylesheet" href="/Uptime.Theme/css/rangeslider.css">
+    <script src="/Uptime.Theme/js/rangeslider.min.js"></script>
+
+    <link rel="stylesheet" href="/Uptime.Theme/css/drop-theme-basic.min.css" />
+    <script src="/Uptime.Theme/js/tether.min.js"></script>
+    <script src="/Uptime.Theme/js/drop.min.js"></script>
+
+    <script src="/Uptime.Theme/js/jquery.nanoscroller.min.js"></script>
+    <link rel="stylesheet" href="/Uptime.Theme/css/nanoscroller.css" />
+
+    <script src="/Uptime.Theme/js/notify.min.js" defer></script>
+</head>
+<body>
+    <div class="layout layout--dashboard">
+        <div class="layout__header">
+            <div class="dashboard-header">
+                <div class="wrapper">
+                    <div class="dashboard-header__logo">
+                        <a href="/">
+                            <div class="logo" title="UptimeEngineer"></div>
+                        </a>
+                    </div>
+
+                    @await Html.PartialAsync("_DashNav")
+
+                    <div class="dashboard-header__mobile-menu-opener">
+                        <div class="mobile-menu-opener">
+                            <button class="hamburger hamburger--3dxy"><span class="hamburger-box"><span class="hamburger-inner"></span></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layout__body">
+            @RenderBody()
+        </div>
+        <div class="layout__footer">
+            <div class="dashboard-footer">
+                <div class="wrapper">
+                    <div class="dashboard-footer__copy">@ViewData["Date"] © Uptime Engineer. All Rights Reserved.</div>
+                    <nav class="footer-nav"><a class="footer-nav__item" href="#">FAQ</a><a class="footer-nav__item" href="#">Privacy</a><a class="footer-nav__item" href="#">Policy</a><a class="footer-nav__item" href="#">Terms & Condition</a></nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-menu">
+        <nav class="mobile-menu__list"><a class="mobile-menu__item mobile-menu__item--icon mobile-menu__item--icon-dashboard" href="#">dashboard</a><a class="mobile-menu__item mobile-menu__item--icon mobile-menu__item--icon-settings" href="#">my settings</a></nav>
+        <nav class="mobile-menu__list mobile-menu__list--bottom"><a class="mobile-menu__item mobile-menu__item--icon mobile-menu__item--icon-logout" href="#">logout</a></nav>
+    </div>
+</body>
+</html>

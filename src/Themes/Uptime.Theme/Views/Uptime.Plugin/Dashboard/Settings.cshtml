@@ -1,0 +1,452 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Account Settings";
+    ViewData["Active"] = "Index";
+}
+@model Uptime.Plugin.ViewModels.Settings.SettingsViewModel
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery xsrf;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpCtxAccessor;
+@inject Microsoft.Extensions.Options.IOptions<Reliablesite.Authority.Model.AuthoritySettings> authSettings;
+
+<style>
+    input.input-validation-error {
+        border-color: #d70500;
+    }
+    .text-danger {
+        color: #d70500;
+    }
+    .new-monitor-modal {
+        width: 500px;
+    }
+    .new-monitor__col {
+        -ms-flex: 0 1 100%;
+        flex: 0 1 100%;
+    }
+</style>
+
+<div class="dashboard-topbar">
+    <div class="wrapper wrapper--narrow">
+        <div class="dashboard-topbar__headline">
+            <h1 class="dashboard-topbar__title">My Settings</h1>
+        </div>
+    </div>
+</div>
+<div id="app" class="settings">
+    <div class="settings__layout wrapper wrapper--narrow">
+        <div class="settings__col">
+            <div class="settings__section settings__section--account panel">
+                <header class="settings__section-header">
+                    <h2 class="settings__section-title">Account Profile</h2>
+                </header>
+                <form method="post" class="form">
+                    <div class="form__section">
+                        <div class="form__section-header">
+                            <h3 class="form__section-title">Personal</h3>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="FullName" class="form-group__label">Full name</label>
+                            <div class="form-group__field">
+                                <label class="field field--wide">
+                                    <input asp-for="FullName" readonly />
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email" class="form-group__label">Email</label>
+                            <div class="form-group__field">
+                                <label class="field field--wide">
+                                    <input asp-for="Email" type="text" readonly>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-group__label">Timezone</label>
+                            <div class="form-group__field">
+
+                                <div class="select">
+                                    <select id="timezone" asp-for="CurrentTimeZone" asp-items="Model.TimeZones" placeholder="Please select">
+                                        @*@{
+                                            foreach (var item in Model.TimeZones)
+                                            {
+
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        }*@
+
+                                    </select>
+
+                                </div>
+
+                                <label class="field field--wide">
+                                </label>
+                            </div>
+                        </div>
+                        @*<div class="form__section-footer">
+                            <button class="button button--color-green" type="button" onclick="location.href='@authSettings.Value.AccountManagementPath'">
+                                <span class="button__inner">Manage personal data</span>
+                            </button>
+                        </div>*@
+
+                    </div>
+                    
+                    <header class="settings__section-header">
+                        <h2 class="settings__section-title">Notifications</h2>
+                    </header>
+                    <div class="form__section">
+                        <div class="form-group">
+                            <div class="control-group control-group--vertical">
+                                <label class="control control--checkbox undefined">
+                                    <input asp-for="InformFeatures" class="control__input" type="checkbox" />
+                                    <span class="control__indicator"></span><span class="control__label">Inform me about new features and updates (no more than twice a month). </span>
+                                </label>
+                                <label class="control control--checkbox undefined">
+                                    <input asp-for="InformDev" class="control__input" type="checkbox" />
+                                    <span class="control__indicator"></span><span class="control__label">Inform me about development/technical updates (API, IPs used..).</span>
+                                </label>
+
+                            </div>
+                        </div>
+                        <div class="form__text">Note: important updates that can effect your usage of the service will still be delivered.</div>
+                    </div>
+                    <div class="form__footer">
+                        <button type="submit" class="button button--color-green"><span class="button__inner">Update</span></button>
+                    </div>
+                </form>
+            </div>
+            <!--<div class="settings__section panel">-->
+                @*<header class="settings__section-header">
+                    <h2 class="settings__section-title">Notifications</h2>
+                </header>*@
+                @*<form method="post" class="form">
+                    <div class="form__section">
+                        <div class="form-group">
+                            <div class="control-group control-group--vertical">
+                                <label class="control control--checkbox undefined">
+                                    <input asp-for="InformFeatures" class="control__input" type="checkbox" />
+                                    <span class="control__indicator"></span><span class="control__label">Inform me about new features and updates (no more than twice a month). </span>
+                                </label>
+                                <label class="control control--checkbox undefined">
+                                    <input asp-for="InformDev" class="control__input" type="checkbox" />
+                                    <span class="control__indicator"></span><span class="control__label">Inform me about development/technical updates (API, IPs used..).</span>
+                                </label>
+
+                            </div>
+                        </div>
+                        <div class="form__text">Note: important updates that can effect your usage of the service will still be delivered.</div>
+                    </div>
+                    <div class="form__footer">
+                        <button type="submit" class="button button--color-green"><span class="button__inner">Update</span></button>
+                    </div>
+                </form>*@
+            <!--</div>-->
+        </div>
+        <div class="settings__col">
+            <div class="settings__section panel">
+                <header class="settings__section-header">
+                    <h2 class="settings__section-title">Alert Contacts</h2>
+                    <button class="new-alert-opener button button--type-text button--type-text-small button--text-color-green"><span class="button__inner">ADD ALERTS CONTACTS</span></button>
+                </header>
+                <div class="form">
+                    <div class="form__section">
+                        <table class="table alert-contacts">
+                            <thead>
+                                <tr>
+                                    <td class="alert-contacts__type">Type</td>
+                                    <td class="alert-contacts__contact">Alert Contact</td>
+                                    <td class="alert-contacts__action">Action</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(contact, index) in alertContacts.items">
+                                    <td class="alert-contacts__type"><span class="alert-contacts__mail"></span></td>
+                                    <td class="alert-contacts__contact">
+                                        <a v-on:click="editAlert(contact.id)" class="dropdown__link" href="javascript:;">{{ contact.name }}</a>
+                                    </td>
+                                    <td class="alert-contacts__action">
+                                        <button v-on:click="alertStatus(contact.id, !contact.active)" :class="'alert-contacts__action-button alert-contacts__action-button--' + (contact.active ? 'pause' : 'play')" type="button" data-tooltip="Enable Alert Contact"></button>
+                                    </td>
+                                </tr>
+                                <tr v-if="alertContacts.items.length == 0">
+                                    <td colspan="3" class="alert-contacts__contact">No Contracts Yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="settings__section panel">
+                <header class="settings__section-header">
+                    <h2 class="settings__section-title">API Settings</h2>
+                </header>
+                <div class="form">
+                    <div class="form__section">
+                        <div class="form__section-header">
+                            <h3 class="form__section-title">Main API Key</h3>
+                        </div>
+                        <div class="form__text">This is the API key that can control almost everything for your account (adding/editing/deleting monitors, alert contacts..).&nbsp;<span class="green">Create the main API key.</span></div>
+                        <div class="form__section-footer">
+                            <button class="button button--color-green"><span class="button__inner">Create the main API key</span></button>
+                        </div>
+                    </div>
+                    <div class="form__section">
+                        <div class="form__section-header">
+                            <h3 class="form__section-title">Monitor-Specific API Keys</h3>
+                        </div>
+                        <div class="form__text">These are the API keys that can only use the read-only GetMonitors API method for a given monitor. They can be safely given to a customer and/or used in client-side code as the main API key won't be revealed.</div>
+                        <div class="form-group">
+                            <label class="form-group__label">Monitor</label>
+                            <div class="form-group__field">
+                                <label class="field field--wide">
+                                    <input type="text" placeholder=" " name="input-name">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="new-monitor-modal modal mfp-hide" id="new-alert">
+        <header class="modal__header">
+            <h2 class="modal__title">Add New Alert Contact</h2>
+            <button class="modal__close" type="button" data-close="modal">X</button>
+        </header>
+        <form class="form new-monitor" v-on:submit.prevent="saveAlert()">
+            <div class="modal__body">
+                <div class="new-monitor__layout">
+                    <div class="new-monitor__col new-monitor__col--left">
+                        <fieldset class="new-monitor__section">
+                            <div class="new-monitor__section-header">
+                                <h3 class="new-monitor__section-title">Monitor Information</h3>
+                            </div>
+                            <div class="new-monitor__section-body">
+                                <div class="form-group">
+                                    <label class="form-group__label">Contact Type</label>
+                                    <div class="form-group__field">
+                                        <div class="select">
+                                            <select id="monitor_type" v-model="currentAlert.type" placeholder="Please select">
+                                                @{
+                                                    foreach (var kvp in Uptime.Monitoring.Model.Models.AlertContact.Types) {
+                                                        <option value="@(kvp.Key)">@(kvp.Value)</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-group__label">Friendly Name</label>
+                                    <div class="form-group__field">
+                                        <label class="field field--wide">
+                                            <input required v-model="currentAlert.name" type="text" placeholder=" ">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-group__label">Email</label>
+                                    <div class="form-group__field">
+                                        <label class="field field--wide">
+                                            <input required v-model="currentAlert.email" type="text" placeholder=" " name="input-name">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-group__label">Notify When</label>
+                                    <div class="form-group__field">
+                                        <div class="select">
+                                            <select v-model="currentAlert.notificationType" placeholder="Please select">
+                                                @{
+                                                    foreach (var kvp in Uptime.Monitoring.Model.Models.AlertContact.NotificationTypes) {
+                                                        <option value="@(kvp.Key)">@(kvp.Value)</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <footer class="modal__footer">
+                <div class="modal__footer-col"></div>
+                <div class="modal__footer-col">
+                    <button type="submit" class="button button--color-green">
+                        <span class="button__inner">{{ currentAlert.id ? 'Save' : 'Create' }} Alert</span>
+                    </button>
+                </div>
+            </footer>
+        </form>
+    </div>
+</div>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            http: {},
+            pageSize: 20,
+            totalPages: 0,
+            currentPage: 1,
+            searchQuery: "",
+            newAlert: {
+                id: 0,
+                active: false,
+                email: '',
+                name: '',
+                notificationType: @((int)Uptime.Monitoring.Model.Models.NotificationType.ONLYDOWN),
+                type: @((int)Uptime.Monitoring.Model.Models.ContactType.EMAIL),
+            },
+            currentAlert: {
+                id: 0,
+                active: false,
+                email: '',
+                name: '',
+                notificationType: @((int)Uptime.Monitoring.Model.Models.NotificationType.ONLYDOWN),
+                type: @((int)Uptime.Monitoring.Model.Models.ContactType.EMAIL),
+            },
+            alertContacts: {
+                items: [],
+                page: 1,
+                pageSize: 10
+            }
+        },
+        methods: {
+            newAlertModalConfig() {
+                var that = this;
+
+                return {
+                    items: {
+                        type: 'inline',
+                        src: '#new-alert'
+                    },
+                    callbacks: {
+                        open: function () {
+                        },
+                        close: function () {
+                            Object.assign(that.currentAlert, that.newAlert);
+                        }
+                    }
+                }
+            },
+            print() {
+                console.log(selected);
+            },
+            
+            alertStatus(id, active) {
+                this.http
+                    .put('/api/alertcontacts/' + id + '/status?active=' + active)
+                    .then(response => {
+                        var alert = null;
+
+                        for (var i = 0; i < this.alertContacts.items.length; i++) {
+                            if (this.alertContacts.items[i].id == id) {
+                                alert = this.alertContacts.items[i];
+                                break;
+                            }
+                        }
+
+                        if (alert == null) {
+                            return;
+                        }
+
+                        alert.active = active;
+                    });
+            },
+
+            editAlert(id) {
+                this.currentAlert.id = id;
+                this.loadAlert(id);
+                $.magnificPopup.open(this.newAlertModalConfig());
+            },
+
+            saveAlert() {
+                this.http
+                    .post("/api/alertcontacts", this.currentAlert)
+                    .then(response => {
+                        this.loadContracts();
+                        $('#new-alert').magnificPopup('close');
+                    })
+                    .catch(error => {
+                        alert(error);
+                    });
+            },
+
+            loadAlert(id) {
+                this.http
+                    .get('/api/alertcontacts/' + id)
+                    .then(response => (this.currentAlert = response.data));
+            },
+
+            loadContracts() {
+                this.http
+                    .get('/api/alertcontacts', { params: { s: this.searchQuery } })
+                    .then(response => (this.alertContacts.items = response.data.data));
+            },
+            
+            showModal(id) {
+                $("#" + id).modal();
+            },
+        },
+
+        mounted() {
+            this.http = axios.create();
+            this.http.interceptors.request.use(function (config) {
+                config.headers = {
+                    "RequestVerificationToken": '@xsrf.GetAndStoreTokens(httpCtxAccessor.HttpContext).RequestToken'
+                }
+
+                return config;
+            }, null);
+
+            var popupOpener = $('.new-alert-opener');
+
+            // interval slider
+            popupOpener.magnificPopup(this.newAlertModalConfig());
+
+            this.loadContracts();
+        }
+    });
+
+    // modals
+    window.modals = [];
+
+    $('[data-toggle="modal"]').each((i, el) => {
+        var toggler = $(el);
+        var target = $(el).data('target');
+
+        toggler.magnificPopup({
+            items: {
+                src: target,
+                type: 'inline'
+            },
+            overflowY: 'scroll'
+        });
+
+        window.modals.push({
+            target: target,
+            toggler: toggler
+        });
+    });
+    $('[data-close="modal"]').on('click', function () { $.magnificPopup.close(); });
+
+    // selects
+    var selects = $('.select select');
+
+    selects.each((i, el) => {
+        var select = $(el)
+        var placeholder = select.attr('placeholder')
+        select.select2({
+            placeholder: {
+                id: '-1', // the value of the option
+                text: placeholder
+            },
+            width: '100%',
+            minimumResultsForSearch: Infinity
+        });
+    });
+</script>

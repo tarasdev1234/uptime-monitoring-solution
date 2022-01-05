@@ -1,0 +1,257 @@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery xsrf;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpCtxAccessor;
+@using Microsoft.AspNetCore.Mvc;
+@using Uptime.Monitoring.Model.Models;
+@using Uptime.Plugin.Dto;
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "";
+    ViewData["Active"] = "Support";
+}
+@model Uptime.Plugin.ViewModels.Support.CreateSupportTicketViewModel
+
+<style>
+    input.input-validation-error {
+        border-color: #d70500;
+    }
+
+    .text-danger {
+        color: #d70500;
+    }
+
+    /* .new-monitor-modal {
+        width: 500px;
+    }*/
+
+    .new-monitor__col {
+        -ms-flex: 0 1 100%;
+        flex: 0 1 100%;
+    }
+
+    .fa-solid, .fas {
+        font-weight: 900;
+        padding-right: 8px;
+        color: #ea3600;
+    }
+
+    .wrong {
+        color: #d70500;
+        font-size: 0.6rem;
+    }
+
+    .correct {
+        color: greenyellow;
+        font-size: 0.6rem;
+    }
+</style>
+
+
+<section id="support-page">
+    <div class="container">
+        <div class="dashboard-topbar">
+            <div class="wrapper wrapper--narrow">
+                <div class="dashboard-topbar__headline">
+                    <h1 class="dashboard-topbar__title"></h1>
+                </div>
+                <div class="dashboard-topbar__actions">
+                    <button type="button" v-on:click="" class="button button--color-green button--size-md button--icon-plus" data-toggle="modal" data-target="#TkModal"><span class="button__inner">Add new Ticket</span></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="widgets">
+            <div class="widgets__item">
+                <div class="widget-monitoring widget">
+                    <header class="widget__header">
+                        <h2 class="widget__title">Support information</h2>
+                    </header>
+                    <div class="widget-monitoring__body widget__body">
+                        <ul class="widget-monitoring__stats">
+                            <li class="widget-monitoring__stats-item widget-monitoring__stats-item--up"><strong class="widget-monitoring__stats-item-title"></strong><span class="widget-monitoring__stats-item-text"><span><i class="fas fa-book"></i></span>Knowledge Base</span></li>
+                            <li class="widget-monitoring__stats-item widget-monitoring__stats-item--down"><strong class="widget-monitoring__stats-item-title"></strong><span class="widget-monitoring__stats-item-text"><span><i class="fas fa-ticket-alt"></i></span>Ticket</span></li>
+                            <li class="widget-monitoring__stats-item widget-monitoring__stats-item--paused"><strong class="widget-monitoring__stats-item-title"></strong><span class="widget-monitoring__stats-item-text"><span><i class="fas fa-users"></i></span>Community</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Trigger the modal with a button -->
+        <!-- Modal -->
+        <div class="modal fade" id="TkModal" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <header class="modal__header">
+                            <h2 class="modal__title">Add New Ticket</h2>
+                            <button class="modal__close" type="button" data-close="modal" data-dismiss="modal">X</button>
+                        </header>
+                    </div>
+                    <div class="modal-body">
+                        <form v-on:submit.prevent="createTicket" class="form new-monitor" id="create_frm" enctype="multipart/form-data">
+                            <div class="modal__body">
+                                <div class="new-monitor__layout">
+                                    <div class="new-monitor__col new-monitor__col--left">
+                                        <fieldset class="new-monitor__section">
+                                            <div class="new-monitor__section-header">
+                                                <h3 class="new-monitor__section-title">Ticket Information</h3>
+                                            </div>
+                                            <div class="new-monitor__section-body">
+                                                <div class="form-group">
+                                                    <label class="form-group__label">Department</label>
+                                                    <div class="form-group__field">
+                                                        <div class="select">
+                                                            <select v-model="selected" class="form-control m-input">
+                                                                <option disabled value="select">Please select one</option>
+                                                                <option value="Support Department">Support Department</option>
+                                                                <option value="Billing Department">Billing Department</option>
+                                                                <option value="Customer Service Department">Customer Service Department</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" id="Email">
+                                                    <label class="form-group__label">Email</label>
+                                                    <div class="form-group__field" v-bind="[isEmailValid()]">
+                                                        <label class="field field--wide">
+                                                            <input required v-model="startTicket.email" type="text" placeholder="">
+                                                            <span v-if="!isEmailNull()">
+                                                                <span class="wrong" v-if="!isEmailValid()">Invalid format</span>
+                                                                <span class="correct" v-else>Correct</span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" id="Subject">
+                                                    <label class="form-group__label">Subject</label>
+                                                    <div class="form-group__field">
+                                                        <label class="field field--wide">
+                                                            <input required v-model="startTicket.subject" type="text" placeholder="" name="input-name">
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" id="Messgae">
+                                                    <label class="form-group__label">Message</label>
+                                                    <div class="form-group__field">
+                                                        <label class="field field--wide">
+
+                                                            <textarea required v-model="startTicket.message" placeholder="Type your Message"></textarea>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" id="Attachment">
+                                                    <label class="form-group__label">Attachment</label>
+                                                    <div class="form-group__field">
+                                                        <label class="field field--wide">
+                                                            <input required v-on:change="handleFileUpload( $event )" type="file" placeholder=" " name="input-name" id="fileInput">
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer">
+
+                                                    <footer class="modal__footer">
+                                                        <div class="modal__footer-col"></div>
+                                                        <div class="modal__footer-col">
+                                                            <button class="button button--color-green"> Submit</button>
+                                                        </div>
+                                                    </footer>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+
+    const app = new Vue({
+        el: '#support-page',
+        data: {
+            http: {},
+            startTicket: {
+                email: '',
+                subject: '',
+                message: ''
+            },
+            file: null,
+            selected: 'select',
+            reg : /^(([^<>()\[\]\\.,;:\s@@"]+(\.[^<>()\[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/
+        },
+        methods: {
+            async createTicket() {
+
+
+                if (!this.isEmailValid()) {
+
+                } else {
+                    let formData = new FormData();
+                    formData.append('Id', 0);
+                    formData.append('Email', this.startTicket.email);
+                    formData.append('Subject', this.startTicket.subject);
+                    formData.append('Message', this.startTicket.message);
+                    formData.append('File', this.file);
+
+                    axios.post('/api/support/tickets/create',
+                        formData,
+                        {
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': "multipart/form-data",
+                                "RequestVerificationToken": '@xsrf.GetAndStoreTokens(httpCtxAccessor.HttpContext).RequestToken'
+                            }
+                        }).then( function(response) {
+                        this.axiosResponse = response.data;
+                        jQuery.noConflict();
+                        jQuery('#TkModal').modal('hide');
+                    }.bind(this)).catch( function(error) {
+                        this.axiosError = error;
+
+                    }.bind(this));
+
+                    formData = null;
+
+
+                    this.selected = 'select';
+                    this.startTicket.email = '';
+                    this.startTicket.subject = '';
+                    this.startTicket.message = '';
+                    document.querySelector('#fileInput').value = '';
+                }
+            },
+
+            handleFileUpload(event) {
+
+                this.file = event.target.files[0];
+            },
+
+            isEmailValid: function () {
+                return (this.startTicket.email == "") ? "" : (this.reg.test(this.startTicket.email)) ? true : false;
+            },
+            isEmailNull: function() {
+                if (this.startTicket.email != "") {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+        },
+        mounted() {
+
+        },
+    });
+</script>

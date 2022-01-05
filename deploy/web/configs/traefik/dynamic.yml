@@ -1,0 +1,80 @@
+http:
+  middlewares:
+    internal-ip-only:
+      ipWhiteList:
+        sourceRange:
+          - "172.93.111.115"
+          - "172.93.111.116"
+          - "172.93.111.117"
+          - "172.93.111.118"
+
+          - "172.93.110.187"
+          - "172.93.110.188"
+          - "172.93.110.189"
+          - "172.93.110.190"
+
+          # 45.58.123.3 - 45.58.123.14
+          - "45.58.123.3"
+          - "45.58.123.4/30"
+          - "45.58.123.8/30"
+          - "45.58.123.12/31"
+          - "45.58.123.14"
+
+          - "206.221.183.227"
+          - "206.221.183.228"
+          - "206.221.183.229"
+          - "206.221.183.230"
+
+          - "172.96.161.115"
+          - "172.96.161.116"
+          - "172.96.161.117"
+          - "172.96.161.118"
+
+          - "172.96.160.140"
+          - "172.96.160.141"
+
+          # web1.la1.uptime.engineer
+          - "172.96.160.128"
+          # web1.mi1.uptime.engineer
+          - "199.127.62.7"
+          # web1.ny1.uptime.engineer
+          - "104.243.45.65"
+
+          # docker 
+          - "172.18.0.1/16"
+
+  services:
+    consul-http:
+      loadBalancer:
+        servers:
+          - url: "http://web1.la1.uptime.engineer:8500/"
+
+    uptimeweb:
+      loadBalancer:
+        servers:
+          - url: "http://web1.la1.uptime.engineer:4502/"
+
+  routers:
+    to-dashboard:
+      service: api@internal
+      entryPoints:
+        - "web-internal"
+      rule: PathPrefix(`/api`) || PathPrefix(`/dashboard`)
+
+    to-consul-http:
+      service: consul-http
+      entryPoints:
+        - "web-internal"
+      rule: "PathPrefix(`/consul`, `/v1`)"
+
+    to-uptimeweb:
+      service: uptimeweb
+      entrypoints:
+        - "websecure"
+      rule: "PathPrefix(`/`)"
+
+    to-uptimeweb-users-api:
+      service: uptimeweb
+      entrypoints:
+        - "websecure"
+      rule: "PathPrefix(`/api/users/{id:[0-9]+}/company`)"

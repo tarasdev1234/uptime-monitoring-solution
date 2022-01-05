@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.0.0" />
+    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.0.0-rc1-10004" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.0.0-rc1-10004" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Authority\Reliablesite.Authority.Authentication\Reliablesite.Authority.Authentication.csproj" />
+    <ProjectReference Include="..\..\Authority\Reliablesite.Authority.Client\Reliablesite.Authority.Client.csproj" />
+    <ProjectReference Include="..\..\Common\Messaging\Messaging.csproj" />
+    <ProjectReference Include="..\..\Core\Uptime.Data.Models\Uptime.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Core\Uptime.Data\Uptime.Data.csproj" />
+    <ProjectReference Include="..\..\Monitoring\Uptime.Monitoring.Cassandra\Uptime.Monitoring.Cassandra.csproj" />
+    <ProjectReference Include="..\..\Monitoring\Uptime.Monitoring.Data\Uptime.Monitoring.Data.csproj" />
+    <ProjectReference Include="..\..\Monitoring\Uptime.Monitoring.Model\Uptime.Monitoring.Model.csproj" />
+    <ProjectReference Include="..\..\Core\Uptime.Mvc\Uptime.Mvc.csproj" />
+    <ProjectReference Include="..\..\Modules\Users\Users.csproj" />
+  </ItemGroup>
+
+</Project>

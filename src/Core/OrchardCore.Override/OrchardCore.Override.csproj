@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OrchardCore" Version="1.0.0-rc1-10004" />
+      <PackageReference Include="OrchardCore.Infrastructure" Version="1.0.0-rc1-10004" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Uptime.Data.Models\Uptime.Data.Models.csproj" />
+      <ProjectReference Include="..\Uptime.Data\Uptime.Data.csproj" />
+      <ProjectReference Include="..\Uptime.Mvc\Uptime.Mvc.csproj" />
+    </ItemGroup>
+
+</Project>

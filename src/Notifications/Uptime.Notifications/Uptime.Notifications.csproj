@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PreserveCompilationReferences>true</PreserveCompilationReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Reliablesite.Service.Core\Reliablesite.Service.Core.csproj" />
+    <ProjectReference Include="..\..\Coordinator\Uptime.Coordinator.Data\Uptime.Coordinator.Data.csproj" />
+    <ProjectReference Include="..\Uptime.Notifications.Data\Uptime.Notifications.Data.csproj" />
+    <ProjectReference Include="..\Uptime.Notifications.Email\Uptime.Notifications.Email.csproj" />
+    <ProjectReference Include="..\Uptime.Notifications.Logic\Uptime.Notifications.Logic.csproj" />
+    <ProjectReference Include="..\Uptime.Notifications.Model\Uptime.Notifications.Model.csproj" />
+    <ProjectReference Include="..\Uptime.Notifications.Web\Uptime.Notifications.Web.csproj" />
+  </ItemGroup>
+
+</Project>

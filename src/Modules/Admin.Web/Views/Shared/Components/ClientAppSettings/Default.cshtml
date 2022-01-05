@@ -1,0 +1,17 @@
+@using Admin.Web.ViewModels
+@model ClientAppSettingsViewModel
+
+<script>
+    var AppSettings = {
+        AfToken: "@Model.AntiForgeryToken",
+        AuthUrl: "@Model.AuthUrl",
+        AppUrl: "@Model.AppUrl",
+        ClientPortalUrl: "@Model.ClientPortalUrl",
+        IdToken: "@Model.IdToken",
+        AccessToken: "@Model.AccessToken",
+        ApiUrl: "@Model.ApiUrl",
+        UserName: "@Model.UserName",
+        UserEmail: "@Model.UserEmail",
+        EmailHash: "@Model.EmailHash",
+    };
+</script>

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Consul" Version="0.7.2.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Messaging\Messaging.csproj" />
+    <ProjectReference Include="..\..\Monitoring\Uptime.Monitoring.Model\Uptime.Monitoring.Model.csproj" />
+    <ProjectReference Include="..\Uptime.Coordinator.Data\Uptime.Coordinator.Data.csproj" />
+    <ProjectReference Include="..\Uptime.Coordinator.Model\Uptime.Coordinator.Model.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,13 @@
+{
+    "datacenter": "la1",
+    "server": true,
+    "ui": true,
+    "ui_content_path": "consul",
+    "log_level": "INFO",
+    "node_name": "web1.la1.uptime.engineer",
+    "client_addr": "0.0.0.0",
+    "bind_addr": "0.0.0.0",
+    "encrypt": "place_your_private_key_here",
+    "retry_join": [],
+    "retry_join_wan": ["web1.la1.uptime.engineer", "web1.mi1.uptime.engineer", "web1.ny1.uptime.engineer"]
+}

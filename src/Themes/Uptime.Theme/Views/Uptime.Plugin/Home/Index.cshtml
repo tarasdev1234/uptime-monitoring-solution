@@ -1,0 +1,257 @@
+﻿@using Uptime.Theme
+@{
+    ViewData["Title"] = "Free Uptime Monitoring Solution";
+    ViewData["Active"] = "Index";
+}
+@model Uptime.Plugin.ViewModels.Home.HomeViewModel;
+
+<div class="promo-monitoring promo-section">
+    <div class="promo-section__header container">
+        <h2 class="promo-section__title">Free Uptime Monitoring</h2>
+        <div class="promo-section__description">
+            <p>With Uptime Engineer monitoring, you get completely free monitoring of your website or service. <br />Receive notifications instantly when it's down or not working properly to maximize availability.</p>
+        </div>
+    </div></br>
+    <div class="promo-section__container">
+        <div class="container">
+            <div class="row justify-content-center">
+                @*<form class="promo-monitoring__form col-12 col-md-12 col-lg-9 col-xl-8">
+            <div class="promo-monitoring__form-query">
+                <label class="field field--wide field--size-lg">
+                    <input type="text" placeholder="https://" name="input-name">
+                </label>
+            </div>
+            <a href="/dashboard">
+                <button class="button promo-monitoring__form-button button--cta-orange button--size-lg">
+                    <span class="button__inner">Start Monitoring</span>
+                </button>
+            </a>
+        </form>*@
+                <a href="/dashboard">
+                    <button class="button promo-map__cta-button button--cta-orange button--size-lg">
+                        <span class="button__inner">Start Monitoring</span>
+                    </button>
+                </a>
+            </div>
+            <figure class="promo-monitoring__figure">
+                <figure class="promo-monitoring__figure-img"></figure>
+            </figure>
+            <div class="promo-monitoring__statistics">
+                <div class="promo-statistics">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12 col-12">
+                            <div class="promo-statistics__item"><strong class="promo-statistics__item-value">@Html.FormatAsBigNumber(Model.UsersCount)</strong><span class="promo-statistics__item-key">total users</span></div>
+                        </div>
+                        <div class="col-md-4 col-sm-12 col-12">
+                            <div class="promo-statistics__item"><strong class="promo-statistics__item-value">@Html.FormatAsBigNumber(Model.MonitorsCount)</strong><span class="promo-statistics__item-key">sites monitored</span></div>
+                        </div>
+                        <div class="col-md-4 col-sm-12 col-12">
+                            <div class="promo-statistics__item"><strong class="promo-statistics__item-value">@Html.FormatAsBigNumber(Model.NotificationsSent)</strong><span class="promo-statistics__item-key">notifications sent</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="promo-why promo-section">
+    <div class="promo-section__header container">
+        <h2 class="promo-section__title">Why should I choose Uptime Engineer?</h2>
+        <div class="promo-section__description">
+            <p>Uptime Engineer is a global uptime monitoring solution for your websites and <br />applications. We help you give your end users the best possible experience<br>by helping you reduce downtime to your services.</p>
+        </div>
+    </div>
+    <div class="promo-section__container">
+        <div class="container">
+            <div class="promo-why__articles-list">
+                <div class="row">
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <div class="promo-why__article">
+                            <article class="promo-why-article">
+                                <span class="promo-why-article__icon promo-why-article__icon--time"></span>
+                                <h2 class="promo-why-article__title">Free Monitoring</h2>
+                                <div class="promo-why-article__text">
+                                    <p>Phasellus tempus quam ut quam tempor pretium. Praesent non massa sit amet purus vulputate volutpat et eleifend est. Cras porta felis quis nunc sagittis a luctus nisi euismod. Ut erat risus, volutpat ac molestie non, auctor eudui semper arcu liquam erat volutpat.</p>
+                                </div>
+                                <footer class="promo-why-article__footer"><a class="read-more" href="/dashboard">Start Monitoring</a></footer>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <div class="promo-why__article">
+                            <article class="promo-why-article">
+                                <span class="promo-why-article__icon promo-why-article__icon--reports"></span>
+                                <h2 class="promo-why-article__title">Downtime Reporting</h2>
+                                <div class="promo-why-article__text">
+                                    <p>Phasellus tempus quam ut quam tempor pretium. Praesent non massa sit amet purus vulputate volutpat et eleifend est. Cras porta felis quis nunc sagittis a luctus nisi euismod. Ut erat risus, volutpat ac molestie non, auctor eudui semper arcu liquam erat volutpat.</p>
+                                </div>
+                                <footer class="promo-why-article__footer"><a class="read-more" href="/dashboard">Start Monitoring</a></footer>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <div class="promo-why__article">
+                            <article class="promo-why-article">
+                                <span class="promo-why-article__icon promo-why-article__icon--transaction"></span>
+                                <h2 class="promo-why-article__title">Instant Notifications</h2>
+                                <div class="promo-why-article__text">
+                                    <p>Phasellus tempus quam ut quam tempor pretium. Praesent non massa sit amet purus vulputate volutpat et eleifend est. Cras porta felis quis nunc sagittis a luctus nisi euismod. Ut erat risus, volutpat ac molestie non, auctor eudui semper arcu liquam erat volutpat.</p>
+                                </div>
+                                <footer class="promo-why-article__footer"><a class="read-more" href="/dashboard">Start Monitoring</a></footer>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="promo-features promo-section">
+    <div class="promo-section__header">
+        <h2 class="promo-section__title">Simple. Powerful. Reliable.</h2>
+    </div>
+    <div class="promo-section__container container">
+        <div class="promo-features__list row">
+            <div class="promo-features__item col-md-6 col-lg-3">
+                <div class="promo-features-item">
+                    <span class="promo-features-item__icon promo-features-item__icon--real-user"></span>
+                    <h3 class="promo-features-item__title">Real User Monitoring</h3>
+                    <p class="promo-features-item__text">Gain valuable insight into the performance of your website from actual visitors to deliver a better experience.</p>
+                </div>
+            </div>
+            <div class="promo-features__item col-md-6 col-lg-3">
+                <div class="promo-features-item">
+                    <span class="promo-features-item__icon promo-features-item__icon--uptime"></span>
+                    <h3 class="promo-features-item__title">Uptime Monitoring</h3>
+                    <p class="promo-features-item__text">Test and verify your websites availability every minute automatically – over 60 global polling locations.</p>
+                </div>
+            </div>
+            <div class="promo-features__item col-md-6 col-lg-3">
+                <div class="promo-features-item">
+                    <span class="promo-features-item__icon promo-features-item__icon--transaction"></span>
+                    <h3 class="promo-features-item__title">Transaction Monitoring</h3>
+                    <p class="promo-features-item__text">Ensure important interactions like signup, search, or downloadable files on your website aren’t slow or broken.</p>
+                </div>
+            </div>
+            <div class="promo-features__item col-md-6 col-lg-3">
+                <div class="promo-features-item">
+                    <span class="promo-features-item__icon promo-features-item__icon--devops"></span>
+                    <h3 class="promo-features-item__title">Devops</h3>
+                    <p class="promo-features-item__text">Integrate with Librato to correlate your data with cloud metrics in real time to help you improve performance.</p>
+                </div>
+            </div>
+            <div class="promo-features__item col-md-6 col-lg-3">
+                <div class="promo-features-item">
+                    <span class="promo-features-item__icon promo-features-item__icon--reliable"></span>
+                    <h3 class="promo-features-item__title">Reliable</h3>
+                    <p class="promo-features-item__text">All issues are verified by a second opinion to filter out false alerts by double-checking downtime.</p>
+                </div>
+            </div>
+            <div class="promo-features__item col-md-6 col-lg-3">
+                <div class="promo-features-item">
+                    <span class="promo-features-item__icon promo-features-item__icon--root-analysis"></span>
+                    <h3 class="promo-features-item__title">Root Cause Analysis</h3>
+                    <p class="promo-features-item__text">Determine the reason behind a website or server outage to resolve the issue and prevent any recurrence.</p>
+                </div>
+            </div>
+            <div class="promo-features__item col-md-6 col-lg-3">
+                <div class="promo-features-item">
+                    <span class="promo-features-item__icon promo-features-item__icon--management"></span>
+                    <h3 class="promo-features-item__title">Incident Management</h3>
+                    <p class="promo-features-item__text">Improve your team’s incident workflow with the right alerts to the right person at the right time.</p>
+                </div>
+            </div>
+            <div class="promo-features__item col-md-6 col-lg-3">
+                <div class="promo-features-item">
+                    <span class="promo-features-item__icon promo-features-item__icon--api"></span>
+                    <h3 class="promo-features-item__title">API</h3>
+                    <p class="promo-features-item__text">Automate your interactions to create your own applications with the functionality you find in the interface.</p>
+                </div>
+            </div>
+        </div>
+        <div class="promo-features__list-navigation">
+            <div class="promo-features__list-navigation-inner"></div>
+        </div>
+    </div>
+</div>
+<div class="promo-tour promo-section">
+    <div class="promo-section__header container">
+        <h2 class="promo-section__title">Be the first to know of&nbsp;<br>any issues of your website</h2>
+        <div class="promo-section__description">
+            <p>With Uptime Engineer website monitoring, you’ll be the first to know when your website is&nbsp;<br>down or if a transaction is slow or broken. We can also help you deliver a higher quality&nbsp;<br>web experience using data from our real user monitoring service.</p>
+        </div>
+    </div>
+    <div class="promo-section__container container">
+        <div class="promo-tour__steps">
+            <div class="promo-tour__line row align-items-center justify-content-between">
+                <div class="col-lg-6 order-lg-12">
+                    <figure class="promo-tour__step-image"><img src="/Uptime.Theme/images/components/promo-tour/step-1.jpg"></figure>
+                </div>
+                <div class="col-lg-5 order-1">
+                    <div class="promo-tour__step promo-tour__step--uptime">
+                        <h3 class="promo-tour__step-title">Uptime Monitoring</h3>
+                        <p class="promo-tour__step-text">Phasellus tempus quam ut quam tempor pretium. Praesent non massa sit amet purus vulputate volutpat et eleifend est Cras porta felis quis.</p><a class="read-more" href="#">Learn more</a>
+                    </div>
+                </div>
+            </div>
+            <div class="promo-tour__line row align-items-center justify-content-between">
+                <div class="col-lg-7">
+                    <figure class="promo-tour__step-image"><img src="/Uptime.Theme/images/components/promo-tour/step-2.jpg"></figure>
+                </div>
+                <div class="col-lg-5">
+                    <div class="promo-tour__step promo-tour__step--ux">
+                        <h3 class="promo-tour__step-title">Real user experience monitoring</h3>
+                        <p class="promo-tour__step-text">Phasellus tempus quam ut quam tempor pretium. Praesent non massa sit amet purus vulputate volutpat et eleifend est Cras porta felis quis.</p><a class="read-more" href="#">Learn more</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="promo-map promo-section">
+    <div class="promo-section__header container">
+        <h2 class="promo-section__title">Over 167 global website monitoring&nbsp;<br>checkpoints... and counting.</h2>
+        <div class="promo-section__description">
+            <p>When it comes to monitoring your websites, servers, and web applications, location is everything. With Uptrends<br>network of dedicated global monitoring checkpoints, you can pinpoint where in the world your downtime, errors,<br>or performance bottlenecks originate, and work quickly to rectify the problem.</p>
+        </div>
+    </div>
+    <div class="promo-map__map-wrap">
+        <div class="promo-map__map">
+            <div class="promo-map__pin promo-map__pin--1">
+                <div class="promo-map__pin-tooltip"><strong>Montreal</strong><br><span>9,8935 Sites</span></div>
+            </div>
+            <div class="promo-map__pin promo-map__pin--2">
+                <div class="promo-map__pin-tooltip"><strong>Montreal</strong><br><span>9,8935 Sites</span></div>
+            </div>
+            <div class="promo-map__pin promo-map__pin--3">
+                <div class="promo-map__pin-tooltip"><strong>Montreal</strong><br><span>9,8935 Sites</span></div>
+            </div>
+            <div class="promo-map__pin promo-map__pin--4">
+                <div class="promo-map__pin-tooltip"><strong>Montreal</strong><br><span>9,8935 Sites</span></div>
+            </div>
+            <div class="promo-map__pin promo-map__pin--5">
+                <div class="promo-map__pin-tooltip"><strong>Montreal</strong><br><span>9,8935 Sites</span></div>
+            </div>
+            <div class="promo-map__pin promo-map__pin--6">
+                <div class="promo-map__pin-tooltip"><strong>Montreal</strong><br><span>9,8935 Sites</span></div>
+            </div>
+            <div class="promo-map__pin promo-map__pin--7">
+                <div class="promo-map__pin-tooltip"><strong>Montreal</strong><br><span>9,8935 Sites</span></div>
+            </div>
+            <div class="promo-map__pin promo-map__pin--8">
+                <div class="promo-map__pin-tooltip"><strong>Montreal</strong><br><span>9,8935 Sites</span></div>
+            </div>
+            <div class="promo-map__pin promo-map__pin--9">
+                <div class="promo-map__pin-tooltip"><strong>Montreal</strong><br><span>9,8935 Sites</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="promo-map__cta">
+        <a href="/dashboard">
+            <button class="button promo-map__cta-button button--cta-orange button--size-lg">
+                <span class="button__inner">Start Monitoring</span>
+            </button>
+        </a>
+    </div>
+
+</div>

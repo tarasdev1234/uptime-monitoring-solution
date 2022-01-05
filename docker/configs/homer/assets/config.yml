@@ -1,0 +1,40 @@
+# Homepage configuration
+# See https://fontawesome.com/icons for icons options
+
+title: "Reliablesite"
+subtitle: "Reliablesite project"
+icon: "far fa-file-code"
+
+# Navbar
+links:
+  - name: "Bitbucket"
+    icon: "fab fa-bitbucket"
+    url: "http://source.reliablesite.net:7990/"
+    target: '_blank' # optionnal html a tag target attribute
+
+# Services
+# First level array represent a group.
+# Leave only a "items" key if not using group (group name, icon & tagstyle are optional, section separation will not be displayed).
+services:
+  - items:
+      - name: "Kafka client"
+        logo: "/assets/logo/kafka.png"
+        url: "http://localhost:9000"
+        tag: "port: 9025"
+        target: '_blank'
+      - name: "Consul"
+        logo: "/assets/logo/consul.png"
+        url: "http://localhost:8500"
+        target: '_blank'
+      - name: "Mailhog"
+        subtitle: "Mail catcher"
+        logo: "/assets/logo/mailhog.png"
+        url: "http://localhost:8025"
+        tag: "port: 25"
+        target: '_blank'
+      - name: "Echo"
+        subtitle: "Http echo server"
+        icon: "fas fa-reply"
+        url: "http://localhost:9999"
+        tag: "port: 9999"
+        target: '_blank'

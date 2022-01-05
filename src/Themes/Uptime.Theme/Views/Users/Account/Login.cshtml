@@ -1,0 +1,95 @@
+﻿@using Users.ViewModels.Account
+@using System.Collections.Generic
+@using System.Linq
+@using Microsoft.AspNetCore.Http
+@using Users.Models.Account
+@model Users.ViewModels.Account.LoginViewModel
+@inject SignInManager<ApplicationUser> SignInManager
+
+<div class="page-header">
+    <h1 class="page-header__title">Login</h1>
+</div>
+
+<div class="container">
+    <div class="login-page" style="padding: 60px 0;">
+
+        @await Html.PartialAsync("_ValidationSummary")
+
+        <div class="settings">
+            <div class="settings__layout wrapper wrapper--narrow">
+
+                <div class="settings__col">
+                    <div class="settings__section settings__section--account panel">
+                        <header class="settings__section-header">
+                            <h2 class="settings__section-title">Login</h2>
+                        </header>
+                        <form class="form" asp-area="Uptime.Plugin.Auth" asp-controller="Account" asp-action="Login">
+                            <input type="hidden" asp-for="ReturnUrl" />
+
+                            <div class="form__section">
+                                <div class="form-group">
+                                    <label asp-for="Username" class="form-group__label">Email</label>
+                                    <div class="form-group__field">
+                                        <label class="field field--wide">
+                                            <input placeholder="Email" asp-for="Username" autofocus>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Password" class="form-group__label">Password</label>
+                                    <div class="form-group__field">
+                                        <label class="field field--wide">
+                                            <input type="password" placeholder="Password" asp-for="Password" autocomplete="off">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="control-group control-group--vertical">
+                                        <label asp-for="RememberLogin" class="control control--checkbox undefined">
+                                            <input asp-for="RememberLogin" class="control__input" type="checkbox" name="name14">
+                                            <span class="control__indicator"></span>
+                                            <span class="control__label">Remember My Login </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form__footer">
+                                <button class="button button--color-green" name="button" value="login">
+                                    <span class="button__inner">Login</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                @{
+                    var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+                    <div class="settings__col">
+                        <div class="settings__section settings__section--account panel">
+                            <header class="settings__section-header">
+                                <h2 class="settings__section-title">External Login</h2>
+                            </header>
+                            <div class="form">
+                                <div class="form__section">
+                                    <ul class="list-inline">
+                                        @foreach (var provider in loginProviders) {
+                                            <li>
+                                                <a class="btn btn-default"
+                                                   asp-action="ExternalLogin"
+                                                   asp-route-provider="@provider.Name"
+                                                   asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                                                    @provider.DisplayName
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

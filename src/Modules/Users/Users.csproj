@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
+    <!--<PackageReference Include="OrchardCore.Module.Targets" Version="1.0.0-rc1-10004" />-->
+    <PackageReference Include="OrchardCore.ResourceManagement" Version="1.0.0-rc1-10004" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Uptime.Data.Models\Uptime.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Core\Uptime.Data\Uptime.Data.csproj" />
+    <ProjectReference Include="..\..\Core\Users.Security\Users.Security.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <RazorGenerate Remove="Views\_Manage\ChangePassword.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\Disable2fa.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\EnableAuthenticator.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\ExternalLogins.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\GenerateRecoveryCodes.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\Index.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\ResetAuthenticator.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\SetPassword.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\TwoFactorAuthentication.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\_Layout.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\_ManageNav.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\_StatusMessage.cshtml" />
+    <RazorGenerate Remove="Views\_Manage\_ViewImports.cshtml" />
+    <RazorGenerate Remove="Views\Grants\Index.cshtml" />
+    <RazorGenerate Remove="Views\Consent\Index.cshtml" />
+    <RazorGenerate Remove="Views\Consent\_ScopeListItem.cshtml" />
+  </ItemGroup>
+
+</Project>

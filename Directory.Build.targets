@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)Default.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp'))">
+  	<CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)NetCore.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+</Project>

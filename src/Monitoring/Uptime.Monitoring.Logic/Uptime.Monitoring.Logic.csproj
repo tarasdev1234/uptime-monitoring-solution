@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Extensions\Uptime.Extensions.csproj" />
+    <ProjectReference Include="..\..\Common\Messaging\Messaging.csproj" />
+    <ProjectReference Include="..\..\Common\Uptime.Schedule\Uptime.Schedule.csproj" />
+    <ProjectReference Include="..\..\Coordinator\Uptime.Coordinator.Client\Uptime.Coordinator.Client.csproj" />
+    <ProjectReference Include="..\..\Coordinator\Uptime.Coordinator.Model\Uptime.Coordinator.Model.csproj" />
+    <ProjectReference Include="..\..\Notifications\Uptime.Notifications.Model\Uptime.Notifications.Model.csproj" />
+    <ProjectReference Include="..\Uptime.Monitoring.Data\Uptime.Monitoring.Data.csproj" />
+    <ProjectReference Include="..\Uptime.Monitoring.HealthChecks\Uptime.Monitoring.HealthChecks.csproj" />
+    <ProjectReference Include="..\Uptime.Monitoring.Model\Uptime.Monitoring.Model.csproj" />
+  </ItemGroup>
+
+</Project>

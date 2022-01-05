@@ -1,0 +1,89 @@
+﻿@{
+    //ViewData["Title"] = "Uptime Engineer";
+    ViewData["Date"] = DateTime.Now.Year;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"] - Uptime.Engineer</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700|Roboto:300,400,500,700">
+    <link rel="stylesheet" href="/Uptime.Theme/css/main.css">
+</head>
+<body>
+    <div class="layout layout--white">
+        <div class="layout__header">
+            <header class="header">
+                <div class="header__wrapper container">
+                    <div class="header__logo">
+                        <a href="/">
+                            <div class="logo" title="UptimeEngineer"></div>
+                        </a>
+                    </div>
+
+                    @await Html.PartialAsync("_Nav")
+
+                    @await Html.PartialAsync("_LoginPartial")
+
+                    <div class="header__mobile-menu-opener">
+                        <div class="mobile-menu-opener">
+                            <button class="hamburger hamburger--3dxy"><span class="hamburger-box"><span class="hamburger-inner"></span></span></button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="layout__body">
+            @await RenderBodyAsync()
+        </div>
+        <div class="layout__footer">
+            <div class="footer">
+                <div class="footer__wrapper container">
+                    <div class="row justify-content-between">
+                        <div class="col-12 col-md-6 footer__col">
+                            <div class="footer__logo">
+                                <div class="logo" title="UptimeEngineer"></div>
+                            </div>
+                            <p class="footer__copy footer__copy--wide-screen">@ViewData["Date"] © Uptime Engineer. All Rights Reserved. </p>
+                        </div>
+                        <div class="col-12 col-md-6 footer__col footer__col--right">
+                            <div class="footer__social">
+                                <ul class="footer-social">
+                                    <li class="footer-social__item"><a class="footer-social__link footer-social__link--facebook" href="#" title="facebook"></a></li>
+                                    <li class="footer-social__item"><a class="footer-social__link footer-social__link--twitter" href="#" title="twitter"></a></li>
+                                    <li class="footer-social__item"><a class="footer-social__link footer-social__link--instagram" href="#" title="instagram"></a></li>
+                                    <li class="footer-social__item"><a class="footer-social__link footer-social__link--youtube" href="#" title="YouTube"></a></li>
+                                </ul>
+                            </div>
+                            <div class="footer__nav">
+                                <nav class="footer-nav"><a class="footer-nav__item" href="#">FAQ</a><a class="footer-nav__item" href="#">Privacy</a><a class="footer-nav__item" href="#">Policy</a><a class="footer-nav__item" href="#">Terms & Condition</a></nav>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <p class="footer__copy footer__copy--mobile">@ViewData["Date"] © Uptime Engineer. All Rights Reserved.</p></br>
+                            <p>Build version 0.01</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-menu">
+        <nav class="mobile-menu__list"><a class="mobile-menu__item mobile-menu__item--icon mobile-menu__item--icon-dashboard" href="#">dashboard</a><a class="mobile-menu__item mobile-menu__item--icon mobile-menu__item--icon-settings" href="#">my settings</a></nav>
+        <nav class="mobile-menu__list mobile-menu__list--bottom"><a class="mobile-menu__item mobile-menu__item--icon mobile-menu__item--icon-logout" href="#">logout</a></nav>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+
+    <script src="/Uptime.Theme/js/common.js" defer></script>
+    <script src="/Uptime.Theme/js/main.js" defer></script>
+
+    <resources type="FootScript" />
+</body>
+</html>

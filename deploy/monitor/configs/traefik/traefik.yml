@@ -1,0 +1,46 @@
+log:
+  level: INFO
+
+entryPoints:
+  web-internal:
+    address: ":8080"
+    http:
+      middlewares:
+        - internal-ip-only@file
+
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+
+  websecure:
+    address: ":443"
+    http:
+      tls:
+        certResolver: dnsresolver
+        domains:
+          - main: "monitor1.ny1.uptime.engineer"
+
+
+api:
+  dashboard: true
+
+providers:
+  consulCatalog:
+    endpoint:
+      address: "http://monitor1.ny1.uptime.engineer:8500"
+    exposedByDefault: false
+
+  file:
+    filename: "/etc/traefik/dynamic.yml"
+
+certificatesResolvers:
+  dnsresolver:
+    acme:
+      dnsChallenge:
+        provider: cloudflare
+        delayBeforeCheck: 90
+      storage: "/var/traefik/acme.json"

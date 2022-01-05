@@ -1,0 +1,16 @@
+﻿<div class="header__navigation">
+    <ul class="site-nav">
+        <li class="site-nav__item @(ViewData["Active"]?.ToString() == "Index" ? "site-nav__item--active" : "")">
+            <a asp-action="Index" asp-controller="Home" asp-route-area="Uptime.Theme">Product</a>
+        </li>
+        <li class="site-nav__item @(ViewData["Active"]?.ToString() == "Support" ? "site-nav__item--active" : "")">
+            <a asp-action="Support" asp-controller="Home" asp-route-area="Uptime.Plugin">Support</a>
+        </li>
+        <li class="site-nav__item @(ViewData["Active"]?.ToString() == "About" ? "site-nav__item--active" : "")">
+            <a asp-action="About" asp-controller="Home" asp-route-area="Uptime.Plugin">About</a>
+        </li>
+        <li class="site-nav__item @(ViewData["Active"]?.ToString() == "Faq" ? "site-nav__item--active" : "")">
+            <a asp-action="Faq" asp-controller="Home" asp-route-area="Uptime.Plugin">FAQ</a>
+        </li>
+    </ul>
+</div>

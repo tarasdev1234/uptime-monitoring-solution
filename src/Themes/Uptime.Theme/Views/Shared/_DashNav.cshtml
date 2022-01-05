@@ -1,0 +1,6 @@
+﻿<nav class="dashboard-nav">
+    <a asp-action="Index" asp-controller="Dashboard" asp-route-area="Uptime.Plugin" class="dashboard-nav__item dashboard-nav__item--dashboard">Dashboard</a>
+    <a asp-action="Settings" asp-controller="Dashboard" asp-route-area="Uptime.Plugin" class="dashboard-nav__item dashboard-nav__item--dashboard">My Settings</a>
+    <a asp-action="Support" asp-controller="SupportTicket" asp-route-area="Uptime.Plugin" class="dashboard-nav__item dashboard-nav__item--dashboard">Support</a>
+    <a asp-action="Logout" asp-controller="Dashboard" asp-area="Uptime.Plugin" asp-route-returnurl="@Url.Action("Index", "Home")" class="dashboard-nav__item dashboard-nav__item--logout">Logout</a>
+</nav>

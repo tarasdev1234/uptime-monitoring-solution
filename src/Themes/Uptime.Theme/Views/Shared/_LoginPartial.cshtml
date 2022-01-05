@@ -1,0 +1,22 @@
+﻿@if (User.Identity.IsAuthenticated) {
+    <a asp-area="Uptime.Plugin" asp-controller="Dashboard" asp-action="Index" class="login-nav__item">
+        Hello @User.Identity.Name!
+    </a>
+    <a asp-area="Uptime.Plugin" asp-controller="Dashboard" asp-action="Logout" asp-route-returnurl="@Url.Action("Index", "Home")" class="login-nav__item">
+        Logout
+    </a>
+} else {
+    <div class="header__user-panel">
+        <nav class="login-nav">
+            <a asp-area="Uptime.Plugin" asp-controller="Dashboard" asp-action="Index" class="login-nav__item">
+                Sign In
+            </a>
+            @*<a asp-area="Users" asp-controller="Account" asp-action="Register" class="login-nav__item login-nav__item--create">
+            Create Account
+        </a>*@
+        <a asp-area="Uptime.Plugin" asp-controller="Dashboard" asp-action="Index" class="login-nav__item">
+            Create Account
+        </a>
+        </nav>
+    </div>
+}

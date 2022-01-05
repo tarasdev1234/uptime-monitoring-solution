@@ -1,0 +1,30 @@
+﻿@page
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@model LogoutModel
+@{
+    ViewData["Title"] = "Log out";
+}
+
+<header>
+    <h1>@ViewData["Title"]</h1>
+    @if (!SignInManager.IsSignedIn(User))
+    {
+    <p>You have successfully logged out of the application.</p>
+    }
+    else
+    {
+    <div class="row">
+        <div class="col-sm-6">
+            <p>Would you like to logout?</p>
+            <form method="post">
+                <fieldset>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Yes</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    }
+</header>

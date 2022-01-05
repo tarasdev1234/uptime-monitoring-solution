@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>1cea6150-e502-47b4-9e39-d229bbafbc58</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Reliablesite.Service.Core\Reliablesite.Service.Core.csproj" />
+    <ProjectReference Include="..\..\Notifications\Uptime.Notifications.Email\Uptime.Notifications.Email.csproj" />
+    <ProjectReference Include="..\Uptime.Monitoring.Cassandra\Uptime.Monitoring.Cassandra.csproj" />
+    <ProjectReference Include="..\Uptime.Monitoring.Data\Uptime.Monitoring.Data.csproj" />
+    <ProjectReference Include="..\Uptime.Monitoring.Logic\Uptime.Monitoring.Logic.csproj" />
+    <ProjectReference Include="..\Uptime.Monitoring.Web\Uptime.Monitoring.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

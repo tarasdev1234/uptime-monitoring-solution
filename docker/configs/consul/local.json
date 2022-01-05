@@ -1,0 +1,28 @@
+{
+  "ui_content_path": "consul",
+  "ports": {
+    "dns": 53
+  },
+  "node_meta": {
+    "test": "test"
+  },
+  "watches": [
+    {
+      "type": "service",
+      "service": "monitoring",
+      "handler_type": "http",
+      "http_handler_config": {
+        "path": "http://host.docker.internal:5004/api/internal/consulcallbacks/services",
+        "method": "PUT",
+        "header": {
+          "x-foo": [
+            "bar",
+            "baz"
+          ]
+        },
+        "timeout": "10s",
+        "tls_skip_verify": false
+      }
+    }
+  ]
+}
